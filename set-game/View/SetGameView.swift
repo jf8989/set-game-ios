@@ -1,8 +1,8 @@
-// View/setGameView.swift
+// View/SetGameView.swift
 
 import SwiftUI
 
-struct ContentView: View {
+struct SetGameView: View {
     var body: some View {
         VStack {
             Image(systemName: "globe")
@@ -15,5 +15,5 @@ struct ContentView: View {
 }
 
 #Preview {
-    ContentView()
+    SetGameView()
 }

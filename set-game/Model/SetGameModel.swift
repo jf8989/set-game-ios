@@ -4,6 +4,7 @@ import Foundation
 
 struct SetGameModel {
     private(set) var deck: [SetCard] = []
+    private(set) var selectedCardIDs = Set<UUID>()
 
     // *** FUNCTIONS ***
 
@@ -24,23 +25,6 @@ struct SetGameModel {
                 }
             }
         }.shuffled()
-        
-        let card1 = deck[0]
-        let card2 = deck[1]
-        let card3 = deck[2]
-        let result = isSet(card1: card1, card2: card2, card3: card3)
-        print("Testing cards")
-        print(card1)
-        print(card2)
-        print(card3)
-        print("Is this a set?\(result ? "Yes" : "No")")
-    }
-
-    // Checks if the attributes are all the same, all different, or 2/3 match.
-    private func allSameOrAllDifferent<T: Hashable>(_ values: [T]) -> Bool {
-        let allSame = values[0] == values[1] && values[1] == values[2]
-        let allDifferent = Set(values).count == 3  // Set eliminates duplicate items
-        return allSame || allDifferent  // returns whichever condition is true
     }
 
     // Fetch the three cards and their individual attributes for evaluation.
@@ -55,5 +39,49 @@ struct SetGameModel {
             && allSameOrAllDifferent(symbols)
             && allSameOrAllDifferent(numbers)
             && allSameOrAllDifferent(shadings)
+    }
+
+    // Checks if the attributes are all the same, all different, or 2/3 match.
+    private func allSameOrAllDifferent<T: Hashable>(_ values: [T]) -> Bool {
+        let allSame = values[0] == values[1] && values[1] == values[2]  // compares my enum values
+        let allDifferent = Set(values).count == 3  // Set eliminates duplicate items
+        return allSame || allDifferent  // returns whichever condition is true
+    }
+
+    // Handles card selection
+    mutating func toggleSelection(for card: SetCard) {
+        // First, check context before doing anything else.
+        if selectedCardIDs.contains(card.id) {  // If the card's already there, deselect it.
+            // deselect it
+            selectedCardIDs.remove(card.id)
+            print("Deselected card:", card)
+        } else if selectedCardIDs.count < 3 {  // If we have less than 3 elements, it's a normal selection
+            // select it
+            selectedCardIDs.insert(card.id)
+            print("Selected card:", card)
+        } else {
+            print("Already 3 selected.")
+        }
+
+        // Log current selection
+        print("Selected IDs:", selectedCardIDs)
+
+        // When 3 unique cards are selected
+        if selectedCardIDs.count == 3 {
+            // Find the selected cards in the deck and use them
+            let selectedCards = deck.filter { selectedCardIDs.contains($0.id) }
+            // as long as selectedCards has 3 elements, we're good to go
+            if selectedCards.count == 3 {
+                let isASet = isSet(
+                    card1: selectedCards[0],
+                    card2: selectedCards[1],
+                    card3: selectedCards[2]
+                )
+                print(
+                    "3 cards selected.  Is it a set? \(isASet ? "YES" : "NO")"
+                )
+                selectedCardIDs = []
+            }
+        }
     }
 }

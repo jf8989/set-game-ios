@@ -8,7 +8,7 @@ class SetGameViewModel: ObservableObject {
     
     private var model = SetGameModel()
     
-    func startNewGame() {
-        model.generateDeck()
-    }
+//    func startNewGame() {
+//        model.generateDeck()
+//    }
 }

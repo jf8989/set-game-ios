@@ -1,7 +1,15 @@
-//
-//  SetGameViewModel.swift
-//  set-game
-//
-//  Created by Juan Francisco Marcenaro Arellano on 29/07/25.
-//
+// ViewModel/SetGameViewModel.swift
 
+import Foundation
+
+class SetGameViewModel: ObservableObject {
+    @Published var deck: [SetCard] = []
+    @Published var selectedCards: [SetCard] = []
+    
+    private var model = SetGameModel()
+    
+    func startGame() {
+        model.generateDeck()
+    }
+    
+}

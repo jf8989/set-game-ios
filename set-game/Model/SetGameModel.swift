@@ -21,5 +21,10 @@ struct SetGameModel {
                 }
             }
         }.shuffled()
+        print(deck.count)
+
+        for card in deck {
+            print(card)
+        }
     }
 }

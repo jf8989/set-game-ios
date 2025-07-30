@@ -24,17 +24,23 @@ struct SetGameModel {
                 }
             }
         }.shuffled()
-        //        print(deck.count)
-        //        for card in deck {
-        //            print(card)
-        //        }
+        
+        let card1 = deck[0]
+        let card2 = deck[1]
+        let card3 = deck[2]
+        let result = isSet(card1: card1, card2: card2, card3: card3)
+        print("Testing cards")
+        print(card1)
+        print(card2)
+        print(card3)
+        print("Is this a set?\(result ? "Yes" : "No")")
     }
 
     // Checks if the attributes are all the same, all different, or 2/3 match.
     private func allSameOrAllDifferent<T: Hashable>(_ values: [T]) -> Bool {
         let allSame = values[0] == values[1] && values[1] == values[2]
         let allDifferent = Set(values).count == 3  // Set eliminates duplicate items
-        return allSame || allDifferent
+        return allSame || allDifferent  // returns whichever condition is true
     }
 
     // Fetch the three cards and their individual attributes for evaluation.

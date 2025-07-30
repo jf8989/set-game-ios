@@ -77,10 +77,13 @@ struct SetGameModel {
                     card2: selectedCards[1],
                     card3: selectedCards[2]
                 )
-                print(
-                    "3 cards selected.  Is it a set? \(isASet ? "YES" : "NO")"
-                )
-                selectedCardIDs = []
+
+                if isASet {
+                    selectedCardIDs.removeAll()
+                    print("This IS a set. \(isASet)")
+                } else {
+                    print("This is NOT a set. \(isASet)")
+                }
             }
         }
     }

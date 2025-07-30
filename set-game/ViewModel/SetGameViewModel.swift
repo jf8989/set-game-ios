@@ -8,8 +8,4 @@ class SetGameViewModel: ObservableObject {
     
     private var model = SetGameModel()
     
-    func startGame() {
-        model.generateDeck()
-    }
-    
 }

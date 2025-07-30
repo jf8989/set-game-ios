@@ -11,11 +11,6 @@ struct SetGameView: View {
                 .imageScale(.large)
                 .foregroundStyle(.tint)
             Text("Hello, world!")
-            Button {
-                viewModel.startGame()
-            } label: {
-                Text("go")
-            }
         }
     }
 }

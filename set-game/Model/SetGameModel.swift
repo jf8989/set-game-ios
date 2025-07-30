@@ -26,28 +26,7 @@ struct SetGameModel {
             }
         }.shuffled()
     }
-
-    // Fetch the three cards and their individual attributes for evaluation.
-    func isSet(card1: SetCard, card2: SetCard, card3: SetCard) -> Bool {
-        let colors = [card1.color, card2.color, card3.color]
-        let symbols = [card1.symbol, card2.symbol, card3.symbol]
-        let numbers = [card1.number, card2.number, card3.number]
-        let shadings = [card1.shading, card2.shading, card3.shading]
-
-        // For each property, check if all same or all different
-        return allSameOrAllDifferent(colors)
-            && allSameOrAllDifferent(symbols)
-            && allSameOrAllDifferent(numbers)
-            && allSameOrAllDifferent(shadings)
-    }
-
-    // Checks if the attributes are all the same, all different, or 2/3 match.
-    private func allSameOrAllDifferent<T: Hashable>(_ values: [T]) -> Bool {
-        let allSame = values[0] == values[1] && values[1] == values[2]  // compares my enum values
-        let allDifferent = Set(values).count == 3  // Set eliminates duplicate items
-        return allSame || allDifferent  // returns whichever condition is true
-    }
-
+    
     // Handles card selection
     mutating func toggleSelection(for card: SetCard) {
         // First, check context before doing anything else.
@@ -86,5 +65,26 @@ struct SetGameModel {
                 }
             }
         }
+    }
+
+    // Fetch the three cards and their individual attributes for evaluation.
+    func isSet(card1: SetCard, card2: SetCard, card3: SetCard) -> Bool {
+        let colors = [card1.color, card2.color, card3.color]
+        let symbols = [card1.symbol, card2.symbol, card3.symbol]
+        let numbers = [card1.number, card2.number, card3.number]
+        let shadings = [card1.shading, card2.shading, card3.shading]
+
+        // For each property, check if all same or all different
+        return (allSameOrAllDifferent(colors)  // We expect all to be true.  If one is false, short circuits and we're done; false.
+            && allSameOrAllDifferent(symbols)
+            && allSameOrAllDifferent(numbers)
+            && allSameOrAllDifferent(shadings))
+    }
+
+    // Checks if the attributes are all the same, all different, or 2/3 match.
+    private func allSameOrAllDifferent<T: Hashable>(_ values: [T]) -> Bool {
+        let allSame = (values[0] == values[1]) && (values[1] == values[2])  // compares my enum values
+        let allDifferent = Set(values).count == 3  // Set eliminates duplicate items
+        return (allSame || allDifferent)  // returns true if any condition is true or return false if both are false
     }
 }

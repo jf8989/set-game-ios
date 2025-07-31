@@ -74,7 +74,11 @@ struct SetGameModel {
                 selectedCardIDs.contains($0.id)
             }
             if selectedCards.count != selectedCardIDs.count {
-                print("These IDs were not found in the deck:", selectedCardIDs, "\n")
+                print(
+                    "These IDs were not found in the deck:",
+                    selectedCardIDs,
+                    "\n"
+                )
             }
             // as long as selectedCards has 3 elements, we're good to go
             if selectedCards.count == 3 {
@@ -85,8 +89,12 @@ struct SetGameModel {
                 )
 
                 if isASet {  // If the cards form a set:
-                    selectedCardIDs.removeAll()
+                    tableCards.removeAll { selectedCardIDs.contains($0.id) }  // 1. Remove selected cards from the table.
                     print("*****This IS a set. \(isASet)")
+                    if !deck.isEmpty {  // 2. If deck's not empty, deal 3 more cards to table
+                        dealCards(for: 3)
+                    }
+                    selectedCardIDs.removeAll()  // 3. Forget selected cards. Ready for next selection batch.
                 } else {  // If they're not a set:
                     print("*****This is NOT a set. \(isASet)")
                 }

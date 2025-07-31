@@ -33,15 +33,18 @@ struct SetGameModel {
 
     // Deals cards when called at any given time
     mutating func dealCards(for dealCount: Int) {
-        if dealCount <= 0 { return }  // ignore bad calls
+        if dealCount <= 0 { return print("Incorrect deal count: \(dealCount)") }  // ignore bad calls
         guard deck.count >= dealCount else {
             // Deal whatever's left even if we're requesting more than what's available.
             tableCards.append(contentsOf: deck)
             deck.removeAll()
+            print("No more cards left in deck.")
             return
         }
         tableCards.append(contentsOf: deck.prefix(dealCount))  // makes a simple copy of next cards in the deck
         deck.removeFirst(dealCount)  // removes those copies from the deck to avoid duplicates
+        print("Added \(dealCount) cards to the table: \(tableCards.suffix(dealCount))")
+        print("Deck now has \(deck.count) cards left.")
     }
 
     // Handles card selection

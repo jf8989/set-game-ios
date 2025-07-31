@@ -6,8 +6,10 @@ enum CardColor: CaseIterable {
     case red, green, purple
 }
 
-enum CardSymbol: CaseIterable {
-    case diamond, oval, squiggle
+enum CardSymbol: String, CaseIterable {
+    case diamond = "◆"
+    case oval = "●"
+    case squiggle = "≃"
 }
 
 enum CardShading: CaseIterable {

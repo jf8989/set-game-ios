@@ -1,6 +1,7 @@
 // View/SetGameView.swift
 
 import SwiftUI
+import UIKit
 
 struct SetGameView: View {
     @StateObject private var viewModel = SetGameViewModel()
@@ -44,11 +45,11 @@ struct CardView: View {
         ZStack {
             RoundedRectangle(cornerRadius: 12)
                 .strokeBorder(lineWidth: 2)
-                .foregroundColor(.gray)
-            Text("\(card.symbol.hashValue)")  // placeholder
+                .foregroundColor(.primary)
+            Text("\(card.symbol.rawValue)")  // placeholder
                 .font(.title)
         }
-        .background(Color.white)
+        .background(Color(UIColor.systemBackground))
         .aspectRatio(2 / 3, contentMode: .fit)
     }
 }

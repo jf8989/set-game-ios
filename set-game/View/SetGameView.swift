@@ -20,12 +20,15 @@ struct SetGameView: View {
                     ForEach(viewModel.tableCards) { card in
                         CardView(
                             card: card,
-                            isSelected: viewModel.selectedCardIDs.contains(card.id))
-                            .aspectRatio(2 / 3, contentMode: .fit)
-                            .onTapGesture {
-                                viewModel.selectCard(card)
-                            }
-                            .padding(4)
+                            isSelected: viewModel.selectedCardIDs.contains(
+                                card.id
+                            )
+                        )
+                        .aspectRatio(2 / 3, contentMode: .fit)
+                        .onTapGesture {
+                            viewModel.selectCard(card)
+                        }
+                        .padding(4)
                     }
                 }
             }
@@ -46,15 +49,29 @@ struct CardView: View {
 
     var body: some View {
         ZStack {
+            // Card background
             RoundedRectangle(cornerRadius: 18)
-                .strokeBorder(lineWidth: 3)
-                .foregroundColor(isSelected ? .blue : .primary)
-            Text("\(card.symbol.rawValue)")  // placeholder
+                .fill(
+                    isSelected
+                        ? Color.blue.opacity(0.3) : Color(.systemBackground)
+                )
+
+            // Card border
+            RoundedRectangle(cornerRadius: 18)
+                .strokeBorder(
+                    isSelected ? Color.blue : Color.primary,
+                    lineWidth: 3
+                )
+
+            // Card symbol
+            Text("\(card.symbol.rawValue)")
                 .font(.title)
+                .foregroundColor(.primary)
         }
-        .background(Color(UIColor.systemBackground))
-        .aspectRatio(2 / 3, contentMode: .fit)
+        .aspectRatio(2 / 3, contentMode: .fill)
+        .padding(2)
     }
+
 }
 
 #Preview {

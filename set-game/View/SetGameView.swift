@@ -21,8 +21,9 @@ struct SetGameView: View {
                         CardView(
                             card: card,
                             isSelected: viewModel.selectedCardIDs.contains(
-                                card.id
-                            )
+                                card.id,
+                            ),
+                            showSetFail: viewModel.showSetFail
                         )
                         .aspectRatio(2 / 3, contentMode: .fit)
                         .onTapGesture {
@@ -46,6 +47,7 @@ struct SetGameView: View {
 struct CardView: View {
     let card: SetCard
     let isSelected: Bool
+    let showSetFail: Bool
 
     var body: some View {
         ZStack {
@@ -53,13 +55,17 @@ struct CardView: View {
             RoundedRectangle(cornerRadius: 18)
                 .fill(
                     isSelected
-                        ? Color.blue.opacity(0.3) : Color(.systemBackground)
+                        ? (showSetFail
+                            ? Color.red.opacity(0.3) : Color.blue.opacity(0.3))
+                        : Color(.systemBackground)
                 )
 
             // Card border
             RoundedRectangle(cornerRadius: 18)
                 .strokeBorder(
-                    isSelected ? Color.blue : Color.primary,
+                    isSelected
+                        ? (showSetFail ? Color.red : Color.blue)
+                        : Color.primary,
                     lineWidth: 3
                 )
 

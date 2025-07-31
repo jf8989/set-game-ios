@@ -6,6 +6,7 @@ struct SetGameModel {
     private(set) var deck: [SetCard] = []  // stack
     private(set) var tableCards: [SetCard] = []  // visible cards
     private(set) var selectedCardIDs = Set<UUID>()
+    private(set) var showSetFail: Bool = false  // determines when to show that the selected cards aren't a set (3)
 
     // *** FUNCTIONS ***
 
@@ -51,6 +52,7 @@ struct SetGameModel {
 
     // Handles card selection
     mutating func toggleSelection(for card: SetCard) {
+        showSetFail = false  // reset here because the user is trying again
         // First, check context before doing anything else.
         if selectedCardIDs.contains(card.id) {  // If the card's already there, deselect it.
             // deselect it
@@ -96,6 +98,7 @@ struct SetGameModel {
                     }
                     selectedCardIDs.removeAll()  // 3. Forget selected cards. Ready for next selection batch.
                 } else {  // If they're not a set:
+                    showSetFail = true
                     print("*****This is NOT a set. \(isASet)")
                 }
             }

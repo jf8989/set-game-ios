@@ -3,9 +3,9 @@
 import Foundation
 
 struct SetGameModel {
-    private(set) var deck: [SetCard] = []
+    private(set) var deck: [SetCard] = []  // stack
+    private(set) var tableCards: [SetCard] = []  // visible cards
     private(set) var selectedCardIDs = Set<UUID>()
-    private(set) var tableCards: [SetCard] = []
 
     // *** FUNCTIONS ***
 
@@ -41,7 +41,7 @@ struct SetGameModel {
             print("No more cards left in deck.")
             return
         }
-        tableCards.append(contentsOf: deck.prefix(dealCount))  // makes a simple copy of next cards in the deck
+        tableCards.append(contentsOf: deck.prefix(dealCount))  // makes a simple COPY of next cards in the deck
         deck.removeFirst(dealCount)  // removes those copies from the deck to avoid duplicates
         print(
             "Added \(dealCount) cards to the table: \(tableCards.suffix(dealCount))"

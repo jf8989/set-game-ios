@@ -43,7 +43,9 @@ struct SetGameModel {
         }
         tableCards.append(contentsOf: deck.prefix(dealCount))  // makes a simple copy of next cards in the deck
         deck.removeFirst(dealCount)  // removes those copies from the deck to avoid duplicates
-        print("Added \(dealCount) cards to the table: \(tableCards.suffix(dealCount))")
+        print(
+            "Added \(dealCount) cards to the table: \(tableCards.suffix(dealCount))"
+        )
         print("Deck now has \(deck.count) cards left.")
     }
 

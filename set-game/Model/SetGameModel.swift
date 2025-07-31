@@ -70,7 +70,12 @@ struct SetGameModel {
         // When 3 unique cards are selected
         if selectedCardIDs.count == 3 {
             // Find the selected cards in the deck and use them
-            let selectedCards = deck.filter { selectedCardIDs.contains($0.id) }
+            let selectedCards = tableCards.filter {
+                selectedCardIDs.contains($0.id)
+            }
+            if selectedCards.count != selectedCardIDs.count {
+                print("These IDs were not found in the deck:", selectedCardIDs, "\n")
+            }
             // as long as selectedCards has 3 elements, we're good to go
             if selectedCards.count == 3 {
                 let isASet = isSet(

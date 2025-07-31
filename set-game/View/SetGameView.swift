@@ -18,7 +18,9 @@ struct SetGameView: View {
                 ]
                 LazyVGrid(columns: columns, spacing: 12) {
                     ForEach(viewModel.tableCards) { card in
-                        CardView(card: card)
+                        CardView(
+                            card: card,
+                            isSelected: viewModel.selectedCardIDs.contains(card.id))
                             .aspectRatio(2 / 3, contentMode: .fit)
                             .onTapGesture {
                                 viewModel.selectCard(card)
@@ -40,12 +42,13 @@ struct SetGameView: View {
 
 struct CardView: View {
     let card: SetCard
+    let isSelected: Bool
 
     var body: some View {
         ZStack {
-            RoundedRectangle(cornerRadius: 12)
-                .strokeBorder(lineWidth: 2)
-                .foregroundColor(.primary)
+            RoundedRectangle(cornerRadius: 18)
+                .strokeBorder(lineWidth: 3)
+                .foregroundColor(isSelected ? .blue : .primary)
             Text("\(card.symbol.rawValue)")  // placeholder
                 .font(.title)
         }

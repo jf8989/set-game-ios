@@ -5,6 +5,7 @@ import Foundation
 struct SetGameModel {
     private(set) var deck: [SetCard] = []
     private(set) var selectedCardIDs = Set<UUID>()
+    var tableCards: [SetCard] = []
 
     // *** FUNCTIONS ***
 
@@ -25,25 +26,41 @@ struct SetGameModel {
                 }
             }
         }.shuffled()
+
+        tableCards.removeAll()  // reset the table
+        dealCards(for: 12)  // deal 12 cards at game start
     }
-    
+
+    // Deals cards when called at any given time
+    mutating func dealCards(for dealCount: Int) {
+        if dealCount <= 0 { return }  // ignore bad calls
+        guard deck.count >= dealCount else {
+            // Deal whatever's left even if we're requesting more than what's available.
+            tableCards.append(contentsOf: deck)
+            deck.removeAll()
+            return
+        }
+        tableCards.append(contentsOf: deck.prefix(dealCount))  // makes a simple copy of next cards in the deck
+        deck.removeFirst(dealCount)  // removes those copies from the deck to avoid duplicates
+    }
+
     // Handles card selection
     mutating func toggleSelection(for card: SetCard) {
         // First, check context before doing anything else.
         if selectedCardIDs.contains(card.id) {  // If the card's already there, deselect it.
             // deselect it
             selectedCardIDs.remove(card.id)
-            print("Deselected card:", card)
+            print("--Deselected card:", card)
         } else if selectedCardIDs.count < 3 {  // If we have less than 3 elements, it's a normal selection
             // select it
             selectedCardIDs.insert(card.id)
-            print("Selected card:", card)
+            print("**Selected card:", card)
         } else {
-            print("Already 3 selected.")
+            print("--Already 3 selected.")
         }
 
         // Log current selection
-        print("Selected IDs:", selectedCardIDs)
+        print("---Selected IDs:", selectedCardIDs)
 
         // When 3 unique cards are selected
         if selectedCardIDs.count == 3 {
@@ -57,11 +74,11 @@ struct SetGameModel {
                     card3: selectedCards[2]
                 )
 
-                if isASet {
+                if isASet {  // If the cards form a set:
                     selectedCardIDs.removeAll()
-                    print("This IS a set. \(isASet)")
-                } else {
-                    print("This is NOT a set. \(isASet)")
+                    print("*****This IS a set. \(isASet)")
+                } else {  // If they're not a set:
+                    print("*****This is NOT a set. \(isASet)")
                 }
             }
         }
@@ -75,7 +92,8 @@ struct SetGameModel {
         let shadings = [card1.shading, card2.shading, card3.shading]
 
         // For each property, check if all same or all different
-        return (allSameOrAllDifferent(colors)  // We expect all to be true.  If one is false, short circuits and we're done; false.
+        return
+            (allSameOrAllDifferent(colors)  // We expect all to be true.  If one is false, short circuits and we're done; false.
             && allSameOrAllDifferent(symbols)
             && allSameOrAllDifferent(numbers)
             && allSameOrAllDifferent(shadings))
@@ -85,6 +103,6 @@ struct SetGameModel {
     private func allSameOrAllDifferent<T: Hashable>(_ values: [T]) -> Bool {
         let allSame = (values[0] == values[1]) && (values[1] == values[2])  // compares my enum values
         let allDifferent = Set(values).count == 3  // Set eliminates duplicate items
-        return (allSame || allDifferent)  // returns true if any condition is true or return false if both are false
+        return (allSame || allDifferent)  // returns TRUE IF any condition IS true or returns FALSE IF both are false
     }
 }

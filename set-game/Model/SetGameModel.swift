@@ -5,7 +5,7 @@ import Foundation
 struct SetGameModel {
     private(set) var deck: [SetCard] = []
     private(set) var selectedCardIDs = Set<UUID>()
-    var tableCards: [SetCard] = []
+    private(set) var tableCards: [SetCard] = []
 
     // *** FUNCTIONS ***
 

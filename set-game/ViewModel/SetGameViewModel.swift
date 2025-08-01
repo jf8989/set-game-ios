@@ -4,24 +4,47 @@ import Foundation
 import SwiftUI
 
 class SetGameViewModel: ObservableObject {
-    @Published var tableCards: [SetCard] = []
-    @Published var selectedCardIDs: Set<UUID> = []
-    @Published var showSetFail: Bool = false
+    // When the model changes, the view will be notified.
+    @Published private var model = SetGameModel()
 
-    private var model = SetGameModel()
+    // MARK: - Properties for the View to Read
+    // The View can read these properties to know how to draw itself.
 
-    func startNewGame() {
-        model.generateDeck()  // Generate the deck and deal 12 cards
-        tableCards = model.tableCards  // Fetch the model's table cards
-        selectedCardIDs = model.selectedCardIDs  // reset when new game
-        showSetFail = model.showSetFail
+    var tableCards: [SetCard] {
+        model.tableCards
     }
 
-    // Handle selection
+    var selectedCardIDs: Set<UUID> {
+        model.selectedCardIDs
+    }
+
+    var showSetSuccess: Bool {
+        model.showSetSuccess
+    }
+
+    var showSetFail: Bool {
+        model.showSetFail
+    }
+
+    var isDeckEmpty: Bool {
+        model.deck.isEmpty
+    }
+
+    // MARK: - User Intents
+
+    // Creates a new model and starts the game.
+    func startNewGame() {
+        model = SetGameModel()
+        model.generateDeck()
+    }
+
+    // Passes the user's choice to the model.
     func selectCard(_ card: SetCard) {
-        model.toggleSelection(for: card)  // Handles card selection logic
-        tableCards = model.tableCards  // Updates the tablecard's current state
-        selectedCardIDs = model.selectedCardIDs  // sync selected cards after selection changes
-        showSetFail = model.showSetFail
+        model.toggleSelection(for: card)
+    }
+
+    // Tells the model to deal more cards.
+    func dealThreeMore() {
+        model.dealCards(for: 3)
     }
 }

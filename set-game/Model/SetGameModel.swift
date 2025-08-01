@@ -3,14 +3,15 @@
 import Foundation
 
 struct SetGameModel {
-    private(set) var deck: [SetCard] = []  // stack
-    private(set) var tableCards: [SetCard] = []  // visible cards
+    private(set) var deck: [SetCard] = []
+    private(set) var tableCards: [SetCard] = []
+
     private(set) var selectedCardIDs = Set<UUID>()
-    private(set) var showSetFail: Bool = false  // determines when to show that the selected cards aren't a set (3)
+    private(set) var showSetSuccess: Bool = false  // true when 3 selected cards ARE a set
+    private(set) var showSetFail: Bool = false  // true when 3 selected cards ARE NOT a set
 
-    // *** FUNCTIONS ***
+    // MARK: - *** DECK CREATION AND DEALING ***
 
-    // Creates the deck by iterating through all cases and appending each unique card to the "deck" array.
     mutating func generateDeck() {
         deck = CardColor.allCases.flatMap { color in
             CardSymbol.allCases.flatMap { symbol in
@@ -28,102 +29,105 @@ struct SetGameModel {
             }
         }.shuffled()
 
-        tableCards.removeAll()  // reset the table
-        dealCards(for: 12)  // deal 12 cards at game start
+        tableCards.removeAll()
+        dealCards(for: 12)
     }
 
-    // Deals cards when called at any given time
     mutating func dealCards(for dealCount: Int) {
-        if dealCount <= 0 { return print("Incorrect deal count: \(dealCount)") }  // ignore bad calls
-        guard deck.count >= dealCount else {
-            // Deal whatever's left even if we're requesting more than what's available.
-            tableCards.append(contentsOf: deck)
-            deck.removeAll()
-            print("No more cards left in deck.")
+        // If 3 matched cards are selected, replace them instead of adding new cards.
+        if showSetSuccess {
+            replaceMatchedCards()
             return
         }
-        tableCards.append(contentsOf: deck.prefix(dealCount))  // makes a simple COPY of next cards in the deck
-        deck.removeFirst(dealCount)  // removes those copies from the deck to avoid duplicates
-        print(
-            "Added \(dealCount) cards to the table: \(tableCards.suffix(dealCount))"
-        )
-        print("Deck now has \(deck.count) cards left.")
+
+        let cardsToDeal = min(dealCount, deck.count)
+        if cardsToDeal > 0 {
+            tableCards.append(contentsOf: deck.prefix(cardsToDeal))
+            deck.removeFirst(cardsToDeal)
+        }
     }
 
-    // Handles card selection
+    // MARK: - *** CORE LOGIC ***
+
     mutating func toggleSelection(for card: SetCard) {
-        showSetFail = false  // reset here because the user is trying again
-        // First, check context before doing anything else.
-        if selectedCardIDs.contains(card.id) {  // If the card's already there, deselect it.
-            // deselect it
-            selectedCardIDs.remove(card.id)
-            print("--Deselected card:", card)
-        } else if selectedCardIDs.count < 3 {  // If we have less than 3 elements, it's a normal selection
-            // select it
-            selectedCardIDs.insert(card.id)
-            print("**Selected card:", card)
-        } else {
-            print("--Already 3 selected.")
+        // 1. Handle the tap AFTER a set has been identified.
+        // If we've already found a successful set, this tap means "OK, I've seen it, move on."
+        if showSetSuccess {
+            replaceMatchedCards()  // Replace the matched cards.
+
+            // If the user tapped a card that wasn't part of the matched set, select it.
+            if !selectedCardIDs.contains(card.id)
+                && tableCards.contains(where: { $0.id == card.id })
+            {
+                selectedCardIDs = [card.id]
+            }
+            return  // Done
         }
 
-        // Log current selection
-        print("---Selected IDs:", selectedCardIDs)
+        // If we've already found a failed set, this tap deselects them and selects the new card.
+        if showSetFail {
+            selectedCardIDs.removeAll()
+            selectedCardIDs.insert(card.id)
+            showSetFail = false  // Reset the flag.
+            return  // Done
+        }
 
-        // When 3 unique cards are selected
+        // 2. Handle standard selection (fewer than 3 cards selected).
+        // If the tapped card is already selected, deselect it.
+        if selectedCardIDs.contains(card.id) {
+            selectedCardIDs.remove(card.id)
+        } else {
+            // Otherwise, select it.
+            selectedCardIDs.insert(card.id)
+        }
+
+        // 3. Check for a set ONLY when the 3rd card is selected.
         if selectedCardIDs.count == 3 {
-            // Find the selected cards in the deck and use them
             let selectedCards = tableCards.filter {
                 selectedCardIDs.contains($0.id)
             }
-            if selectedCards.count != selectedCardIDs.count {
-                print(
-                    "These IDs were not found in the deck:",
-                    selectedCardIDs,
-                    "\n"
-                )
-            }
-            // as long as selectedCards has 3 elements, we're good to go
-            if selectedCards.count == 3 {
-                let isASet = isSet(
-                    card1: selectedCards[0],
-                    card2: selectedCards[1],
-                    card3: selectedCards[2]
-                )
-
-                if isASet {  // If the cards form a set:
-                    tableCards.removeAll { selectedCardIDs.contains($0.id) }  // 1. Remove selected cards from the table.
-                    print("*****This IS a set. \(isASet)")
-                    if !deck.isEmpty {  // 2. If deck's not empty, deal 3 more cards to table
-                        dealCards(for: 3)
-                    }
-                    selectedCardIDs.removeAll()  // 3. Forget selected cards. Ready for next selection batch.
-                } else {  // If they're not a set:
-                    showSetFail = true
-                    print("*****This is NOT a set. \(isASet)")
-                }
+            if isSet(cards: selectedCards) {
+                // Set! Set success flag.
+                showSetSuccess = true
+            } else {
+                // Mismatch. Set fail flag.
+                showSetFail = true
             }
         }
     }
 
-    // Fetch the three cards and their individual attributes for evaluation.
-    func isSet(card1: SetCard, card2: SetCard, card3: SetCard) -> Bool {
-        let colors = [card1.color, card2.color, card3.color]
-        let symbols = [card1.symbol, card2.symbol, card3.symbol]
-        let numbers = [card1.number, card2.number, card3.number]
-        let shadings = [card1.shading, card2.shading, card3.shading]
+    // MARK: - *** HELPER FUNCTIONS (model-only methods) ***
 
-        // For each property, check if all same or all different
-        return
-            (allSameOrAllDifferent(colors)  // We expect all to be true.  If one is false, short circuits and we're done; false.
-            && allSameOrAllDifferent(symbols)
-            && allSameOrAllDifferent(numbers)
-            && allSameOrAllDifferent(shadings))
+    private mutating func replaceMatchedCards() {
+        // Remove matched cards from the table.
+        tableCards.removeAll { selectedCardIDs.contains($0.id) }
+
+        // Deal 3 new cards from the deck.
+        dealCards(for: 3)
+
+        // Clear the selection and reset the flags.
+        selectedCardIDs.removeAll()
+        showSetSuccess = false
     }
 
-    // Checks if the attributes are all the same, all different, or 2/3 match.
+    private func isSet(cards: [SetCard]) -> Bool {
+        guard cards.count == 3 else { return false }
+
+        // Fetch unique card's attributes.
+        let colors = cards.map { $0.color }
+        let symbols = cards.map { $0.symbol }
+        let numbers = cards.map { $0.number.rawValue }
+        let shadings = cards.map { $0.shading }
+
+        // Perform Set evaluation logic.
+        return allSameOrAllDifferent(colors)
+            && allSameOrAllDifferent(symbols)
+            && allSameOrAllDifferent(numbers)
+            && allSameOrAllDifferent(shadings)
+    }
+
     private func allSameOrAllDifferent<T: Hashable>(_ values: [T]) -> Bool {
-        let allSame = (values[0] == values[1]) && (values[1] == values[2])  // compares my enum values
-        let allDifferent = Set(values).count == 3  // Set eliminates duplicate items
-        return (allSame || allDifferent)  // returns TRUE IF any condition IS true or returns FALSE IF both are false
+        let uniqueValues = Set(values)
+        return uniqueValues.count == 1 || uniqueValues.count == 3
     }
 }

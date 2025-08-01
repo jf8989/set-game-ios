@@ -2,6 +2,8 @@
 
 import Foundation
 
+// MARK: - Card Attributes
+
 enum CardColor: CaseIterable {
     case red, green, purple
 }
@@ -16,9 +18,13 @@ enum CardShading: CaseIterable {
     case solid, open, striped
 }
 
-enum CardNumber: CaseIterable {
-    case one, two, three
+enum CardNumber: Int, CaseIterable {
+    case one = 1
+    case two = 2
+    case three = 3
 }
+
+// MARK: - Card Structure
 
 struct SetCard: Identifiable {
     var id: UUID

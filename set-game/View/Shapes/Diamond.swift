@@ -26,5 +26,5 @@ struct Diamond: Shape {
 }
 
 #Preview {
-    Diamond().stroke(.red, lineWidth: 3).frame(width: 60, height: 100)
+    Diamond()
 }

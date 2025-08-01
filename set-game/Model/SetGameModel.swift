@@ -77,7 +77,7 @@ struct SetGameModel {
         if selectedCardIDs.contains(card.id) {
             selectedCardIDs.remove(card.id)
         } else {
-            // Otherwise, select it.
+            // Otherwise, select it normally.
             selectedCardIDs.insert(card.id)
         }
 
@@ -89,6 +89,7 @@ struct SetGameModel {
             if isSet(cards: selectedCards) {
                 // Set! Set success flag.
                 showSetSuccess = true
+                print("It's a set!")
             } else {
                 // Mismatch. Set fail flag.
                 showSetFail = true
@@ -96,7 +97,7 @@ struct SetGameModel {
         }
     }
 
-    // MARK: - *** HELPER FUNCTIONS (model-only methods) ***
+    // MARK: - *** HELPERS (model-only methods) ***
 
     private mutating func replaceMatchedCards() {
         // Remove matched cards from the table.

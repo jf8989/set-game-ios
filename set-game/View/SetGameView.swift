@@ -23,6 +23,7 @@ struct SetGameView: View {
                             isSelected: viewModel.selectedCardIDs.contains(
                                 card.id,
                             ),
+                            showSetSuccess: viewModel.showSetSuccess,
                             showSetFail: viewModel.showSetFail
                         )
                         .aspectRatio(2 / 3, contentMode: .fit)
@@ -47,27 +48,32 @@ struct SetGameView: View {
 struct CardView: View {
     let card: SetCard
     let isSelected: Bool
+    let showSetSuccess: Bool
     let showSetFail: Bool
+
+    private var selectionColor: Color {
+        if isSelected {
+            if showSetSuccess {
+                return .green  // for a Set!
+            } else if showSetFail {
+                return .red  // for a missmatch
+            } else {
+                return .blue  // it's a pending selection
+            }
+        } else {
+            return .primary  // no selection made yet
+        }
+    }
 
     var body: some View {
         ZStack {
+            let shape = RoundedRectangle(cornerRadius: 18)
+
             // Card background
-            RoundedRectangle(cornerRadius: 18)
-                .fill(
-                    isSelected
-                        ? (showSetFail
-                            ? Color.red.opacity(0.3) : Color.blue.opacity(0.3))
-                        : Color(.systemBackground)
-                )
+            shape.fill(Color(.systemBackground))
 
             // Card border
-            RoundedRectangle(cornerRadius: 18)
-                .strokeBorder(
-                    isSelected
-                        ? (showSetFail ? Color.red : Color.blue)
-                        : Color.primary,
-                    lineWidth: 3
-                )
+            shape.strokeBorder(selectionColor, lineWidth: isSelected ? 4 : 2)
 
             // Card symbol
             Text("\(card.symbol.rawValue)")

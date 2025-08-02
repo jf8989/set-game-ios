@@ -51,6 +51,9 @@ struct CardView: View {
     let showSetSuccess: Bool
     let showSetFail: Bool
 
+    @EnvironmentObject var viewModel: SetGameViewModel
+
+    // Selects color for the card's border upon selection
     private var selectionColor: Color {
         if isSelected {
             if showSetSuccess {
@@ -76,9 +79,23 @@ struct CardView: View {
             shape.strokeBorder(selectionColor, lineWidth: isSelected ? 4 : 2)
 
             // Card symbol
-            Text("\(card.symbol.rawValue)")
-                .font(.title)
-                .foregroundColor(.primary)
+            GeometryReader { geo in
+                VStack(spacing: geo.size.height * 0.08) {
+                    ForEach(0..<card.number.rawValue, id: \.self) { _ in
+                        SetSymbolView(
+                            symbol: card.symbol,
+                            color: viewModel.color(for: card.color),
+                            shading: card.shading
+                        )
+                        .frame(
+                            width: geo.size.width * 0.6,
+                            height: geo.size.height * 0.18
+                        )
+                    }
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            }
+            .padding(10)
         }
         .aspectRatio(2 / 3, contentMode: .fill)
         .padding(2)
@@ -87,5 +104,5 @@ struct CardView: View {
 }
 
 #Preview {
-    SetGameView()
+    SetGameView().environmentObject(SetGameViewModel())
 }

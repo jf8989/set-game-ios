@@ -47,4 +47,15 @@ class SetGameViewModel: ObservableObject {
     func dealThreeMore() {
         model.dealCards(for: 3)
     }
+
+}
+
+extension SetGameViewModel {
+    func color(for cardColor: CardColor) -> Color {
+        switch cardColor {
+        case .red: return .red
+        case .green: return .green
+        case .purple: return .purple
+        }
+    }
 }

@@ -14,11 +14,14 @@ struct SetGameView: View {
     private var gameTitle: some View {
         Text("Set Game")
             .font(.largeTitle)
+            .frame(maxWidth: .infinity)
+            .multilineTextAlignment(.center)
             .padding(.top)
     }
 
     private var gameInstructions: some View {
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(spacing: 8) {
+            Spacer()
             Text("How to Play:")
                 .font(.headline)
             Text(
@@ -30,9 +33,14 @@ struct SetGameView: View {
             )
             .font(.subheadline)
             .foregroundColor(.secondary)
+            .multilineTextAlignment(.leading)
+            .lineLimit(nil)
+            .fixedSize(horizontal: false, vertical: true)
         }
+        .frame(maxWidth: 500)
         .padding(.horizontal)
         .padding(.bottom, 6)
+        .frame(maxWidth: .infinity)
     }
 
     private var cardGrid: some View {
@@ -86,7 +94,7 @@ struct SetGameView: View {
         .padding(.bottom, 10)
     }
 
-    // --- MAIN BODY ---
+    // MAIN BODY
 
     var body: some View {
         VStack {

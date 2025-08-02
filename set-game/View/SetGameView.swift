@@ -7,67 +7,96 @@ import SwiftUI
 struct SetGameView: View {
     @StateObject private var viewModel = SetGameViewModel()
     @Namespace private var dealSpace
+    @State private var showInstructions = true
+
+    // Computed properties
+
+    private var gameTitle: some View {
+        Text("Set Game")
+            .font(.largeTitle)
+            .padding(.top)
+    }
+
+    private var gameInstructions: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text("How to Play:")
+                .font(.headline)
+            Text(
+                """
+                - Select 3 cards you think form a Set.
+                - A Set means each property (color, symbol, shading, number) is all the same or all different.
+                - Tap to select/deselect. After 3 cards, see if you found a Set!
+                """
+            )
+            .font(.subheadline)
+            .foregroundColor(.secondary)
+        }
+        .padding(.horizontal)
+        .padding(.bottom, 6)
+    }
+
+    private var cardGrid: some View {
+        ScrollView {
+            LazyVGrid(
+                columns: [GridItem(.adaptive(minimum: 70))],
+                spacing: 12
+            ) {
+                ForEach(viewModel.tableCards) { card in
+                    CardView(
+                        card: card,
+                        isSelected: viewModel.selectedCardIDs.contains(card.id),
+                        showSetSuccess: viewModel.showSetSuccess,
+                        showSetFail: viewModel.showSetFail,
+                        namespace: dealSpace
+                    )
+                    .aspectRatio(2 / 3, contentMode: .fit)
+                    .onTapGesture { viewModel.selectCard(card) }
+                    .transition(
+                        .asymmetric(
+                            insertion: .scale(scale: 0.8).combined(
+                                with: .opacity
+                            ),
+                            removal: .opacity
+                        )
+                    )
+                }
+            }
+            .padding(.horizontal)
+            .padding(.vertical, 6)
+            .animation(
+                .spring(response: 0.35, dampingFraction: 0.75),
+                value: viewModel.tableCards
+            )
+            .environmentObject(viewModel)
+        }
+    }
+
+    private var actionButtons: some View {
+        HStack(spacing: 22) {
+            Button("New Game") {
+                withAnimation { viewModel.startNewGame() }
+                showInstructions = false
+            }
+            Button("Deal 3 More") {
+                withAnimation { viewModel.dealThreeMore() }
+            }
+            .disabled(viewModel.isDeckEmpty)
+        }
+        .font(.title2)
+        .padding(.bottom, 10)
+    }
+
+    // --- MAIN BODY ---
 
     var body: some View {
         VStack {
-            // Title
-            Text("Set Game")
-                .font(.largeTitle)
-                .padding(.top)
-
-            // Card grid
-            ScrollView {
-                LazyVGrid(
-                    columns: [GridItem(.adaptive(minimum: 70))],
-                    spacing: 12
-                ) {
-                    ForEach(viewModel.tableCards) { card in
-                        CardView(
-                            card: card,
-                            isSelected: viewModel.selectedCardIDs.contains(
-                                card.id
-                            ),
-                            showSetSuccess: viewModel.showSetSuccess,
-                            showSetFail: viewModel.showSetFail,
-                            namespace: dealSpace  // ★
-                        )
-                        .aspectRatio(2 / 3, contentMode: .fit)
-                        .onTapGesture { viewModel.selectCard(card) }
-                        // fade in-out animation
-                        .transition(
-                            .asymmetric(
-                                insertion: .scale(scale: 0.8)
-                                    .combined(with: .opacity),
-                                removal: .opacity
-                            )
-                        )
-                    }
-                }
-                .padding(.vertical)
-                .padding(.horizontal)
-                // animates any change of the tableCards array
-                .animation(
-                    .spring(response: 0.35, dampingFraction: 0.75),
-                    value: viewModel.tableCards
-                )
-                .environmentObject(viewModel)  // one injection for all
+            gameTitle
+            if showInstructions {
+                gameInstructions
             }
-
+            cardGrid
             Spacer()
-
-            // Control buttons
-            HStack {
-                Button("New Game") {
-                    withAnimation { viewModel.startNewGame() }
-                }
-                Spacer()
-                Button("Deal 3 More") {
-                    withAnimation { viewModel.dealThreeMore() }
-                }
-                .disabled(viewModel.isDeckEmpty)
-            }
-            .font(.title2)
-            .padding()
+            actionButtons
         }
     }
 }

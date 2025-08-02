@@ -19,11 +19,11 @@ class SetGameViewModel: ObservableObject {
     }
 
     var showSetSuccess: Bool {
-        model.showSetSuccess
+        model.setFound
     }
 
     var showSetFail: Bool {
-        model.showSetFail
+        model.setFail
     }
 
     var isDeckEmpty: Bool {

@@ -40,3 +40,7 @@ struct SetSymbolView: View {
     }
 
 }
+
+#Preview {
+    SetSymbolView(symbol: <#CardSymbol#>, color: <#Color#>, shading: <#CardShading#>)
+}

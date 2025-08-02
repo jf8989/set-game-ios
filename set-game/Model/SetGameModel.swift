@@ -5,12 +5,11 @@ import Foundation
 struct SetGameModel {
     private(set) var deck: [SetCard] = []
     private(set) var tableCards: [SetCard] = []
-
     private(set) var selectedCardIDs = Set<UUID>()
-    private(set) var showSetSuccess: Bool = false  // true when 3 selected cards ARE a set
-    private(set) var showSetFail: Bool = false  // true when 3 selected cards ARE NOT a set
+    private(set) var setFound: Bool = false  // true if last selection was a Set
+    private(set) var setFail: Bool = false  // true if last selection was NOT a Set
 
-    // MARK: - *** DECK CREATION AND DEALING ***
+    // MARK: - Deck Creation and Game Reset
 
     mutating func generateDeck() {
         deck = CardColor.allCases.flatMap { color in
@@ -28,99 +27,89 @@ struct SetGameModel {
                 }
             }
         }.shuffled()
-
+        print("Deck generated.")
         tableCards.removeAll()
+        selectedCardIDs.removeAll()
+        setFound = false
+        setFail = false
         dealCards(for: 12)
     }
 
-    mutating func dealCards(for dealCount: Int) {
-        // If 3 matched cards are selected, replace them instead of adding new cards.
-        if showSetSuccess {
-            replaceMatchedCards()
-            return
-        }
-
-        let cardsToDeal = min(dealCount, deck.count)
+    /// Deals up to the specified number of cards from the deck to the table.
+    mutating func dealCards(for count: Int) {
+        let cardsToDeal = min(count, deck.count)
         if cardsToDeal > 0 {
             tableCards.append(contentsOf: deck.prefix(cardsToDeal))
             deck.removeFirst(cardsToDeal)
         }
+        print("Dealing \(cardsToDeal) cards.")
     }
 
-    // MARK: - *** CORE LOGIC ***
-
+    /// Handles user selection and Set logic.
     mutating func toggleSelection(for card: SetCard) {
-        // 1. Handle the tap AFTER a set has been identified.
-        // If we've already found a successful set, this tap means "OK, I've seen it, move on."
-        if showSetSuccess {
-            replaceMatchedCards()  // Replace the matched cards.
-
-            // If the user tapped a card that wasn't part of the matched set, select it.
-            if !selectedCardIDs.contains(card.id)
-                && tableCards.contains(where: { $0.id == card.id })
-            {
-                selectedCardIDs = [card.id]
+        // If a Set was just found, remove and replace, then handle new selection.
+        if setFound {
+            tableCards.removeAll { selectedCardIDs.contains($0.id) }
+            selectedCardIDs.removeAll()
+            setFound = false
+            setFail = false
+            dealCards(for: 3)
+            // Select card if still present on table because this is a new selection attempt.
+            if tableCards.contains(where: { $0.id == card.id }) {
+                selectedCardIDs.insert(card.id)
             }
-            return  // Done
+            return
         }
 
-        // If we've already found a failed set, this tap deselects them and selects the new card.
-        if showSetFail {
+        // If last selection was a failed Set, deselect all and select the tapped card.
+        if setFail {
             selectedCardIDs.removeAll()
             selectedCardIDs.insert(card.id)
-            showSetFail = false  // Reset the flag.
-            return  // Done
+            setFail = false
+            return
         }
 
-        // 2. Handle standard selection (fewer than 3 cards selected).
-        // If the tapped card is already selected, deselect it.
+        // Standard select/deselect logic before we even evaluate if it's a set.
+        // When the user wants to deselect a card:
         if selectedCardIDs.contains(card.id) {
             selectedCardIDs.remove(card.id)
         } else {
-            // Otherwise, select it normally.
+            // When the user selects a new card. (not yet 3)
             selectedCardIDs.insert(card.id)
         }
 
-        // 3. Check for a set ONLY when the 3rd card is selected.
+        // Only check for Set if exactly 3 selected.
         if selectedCardIDs.count == 3 {
+            // Find the selected cards on the table by ID.
             let selectedCards = tableCards.filter {
                 selectedCardIDs.contains($0.id)
             }
+            // Send them for evaluation.
+            // If this returns true:
             if isSet(cards: selectedCards) {
-                // Set! Set success flag.
-                showSetSuccess = true
-                print("It's a set!")
+                setFound = true
+                setFail = false
+                print("This is a SET!: TRUE")
             } else {
-                // Mismatch. Set fail flag.
-                showSetFail = true
+                setFound = false
+                setFail = true
+                print("This is NOT a SET!: FALSE")
             }
+        } else {
+            setFound = false
+            setFail = false
         }
     }
 
-    // MARK: - *** HELPERS (model-only methods) ***
-
-    private mutating func replaceMatchedCards() {
-        // Remove matched cards from the table.
-        tableCards.removeAll { selectedCardIDs.contains($0.id) }
-
-        // Deal 3 new cards from the deck.
-        dealCards(for: 3)
-
-        // Clear the selection and reset the flags.
-        selectedCardIDs.removeAll()
-        showSetSuccess = false
-    }
+    // MARK: - Helpers
 
     private func isSet(cards: [SetCard]) -> Bool {
         guard cards.count == 3 else { return false }
-
-        // Fetch unique card's attributes.
         let colors = cards.map { $0.color }
         let symbols = cards.map { $0.symbol }
         let numbers = cards.map { $0.number.rawValue }
         let shadings = cards.map { $0.shading }
 
-        // Perform Set evaluation logic.
         return allSameOrAllDifferent(colors)
             && allSameOrAllDifferent(symbols)
             && allSameOrAllDifferent(numbers)
@@ -128,7 +117,7 @@ struct SetGameModel {
     }
 
     private func allSameOrAllDifferent<T: Hashable>(_ values: [T]) -> Bool {
-        let uniqueValues = Set(values)
-        return uniqueValues.count == 1 || uniqueValues.count == 3
+        let unique = Set(values)
+        return unique.count == 1 || unique.count == 3
     }
 }

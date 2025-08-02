@@ -69,7 +69,6 @@ struct SetGameView: View {
             .font(.title2)
             .padding()
         }
-        .onAppear { viewModel.startNewGame() }
     }
 }
 

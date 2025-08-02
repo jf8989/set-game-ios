@@ -6,7 +6,7 @@ struct SetGameModel {
     private(set) var deck: [SetCard] = []
     private(set) var tableCards: [SetCard] = []
     private(set) var selectedCardIDs = Set<UUID>()
-    private(set) var setFound: Bool = false  // true if last selection was a Set
+    private(set) var setFound: Bool = false  // true if last selection WAS a Set
     private(set) var setFail: Bool = false  // true if last selection was NOT a Set
 
     // MARK: - Deck Creation and Game Reset
@@ -45,7 +45,7 @@ struct SetGameModel {
         print("Dealing \(cardsToDeal) cards.")
     }
 
-    /// Handles user selection and Set logic.
+    /// Handles user selection and Set calculation logic.
     mutating func toggleSelection(for card: SetCard) {
         // If a Set was just found, remove and replace, then handle new selection.
         if setFound {

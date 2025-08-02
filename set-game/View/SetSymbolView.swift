@@ -2,16 +2,18 @@
 
 import SwiftUI
 
+/// Draws ONE symbol (diamond / oval / squiggle) in the requested color & shading.
+/// CardView stacks 1-3 of these vertically.
 struct SetSymbolView: View {
     let symbol: CardSymbol
     let color: Color
     let shading: CardShading
 
     var body: some View {
-        GeometryReader { geometry in
-            let size = min(geometry.size.width, geometry.size.height)
-            let width = size
-            let height = size * 0.6
+        GeometryReader { geo in
+            // Symbol size: 70 % of card width, 60 % of that for height.
+            let width = geo.size.width * 0.70
+            let height = width * 0.60
 
             switch symbol {
             case .diamond:
@@ -19,26 +21,68 @@ struct SetSymbolView: View {
             case .oval:
                 symbolBody(shape: Capsule(), width: width, height: height)
             case .squiggle:
-                symbolBody(shape: RoundedRectangle(cornerRadius: 18), width: width, height: height)
+                symbolBody(shape: Squiggle(), width: width, height: height)
             }
         }
     }
 
+    /// Applies solid / open / striped rendering + centres the shape.
     @ViewBuilder
-    private func symbolBody<S: Shape>(shape: S, width: CGFloat, height: CGFloat) -> some View {
+    private func symbolBody<S: Shape>(
+        shape: S,
+        width: CGFloat,
+        height: CGFloat
+    ) -> some View {
         switch shading {
         case .solid:
             shape
                 .fill(color)
                 .frame(width: width, height: height)
+                .centerInParent()
+
         case .open:
             shape
                 .stroke(color, lineWidth: 2)
                 .frame(width: width, height: height)
+                .centerInParent()
+
         case .striped:
             shape
-                .fill(color.opacity(0.25))
+                .fill(color.opacity(0.35))
                 .frame(width: width, height: height)
+                .centerInParent()
         }
+    }
+}
+
+/// REUSABLE modifier for centring in GeometryReader space.
+extension View {
+    fileprivate func centerInParent() -> some View {
+        self.frame(
+            maxWidth: .infinity,
+            maxHeight: .infinity,
+            alignment: .center
+        )
+    }
+}
+
+/// Simple wavy squiggle shape.
+struct Squiggle: Shape {
+    func path(in rect: CGRect) -> Path {
+        var p = Path()
+        let midY = rect.midY
+        let amp = rect.height * 0.30
+        p.move(to: CGPoint(x: rect.minX, y: midY + amp))
+        p.addCurve(
+            to: CGPoint(x: rect.maxX, y: midY - amp),
+            control1: CGPoint(x: rect.width * 0.35, y: midY + 2 * amp),
+            control2: CGPoint(x: rect.width * 0.65, y: midY - 2 * amp)
+        )
+        p.addCurve(
+            to: CGPoint(x: rect.minX, y: midY + amp),
+            control1: CGPoint(x: rect.width * 0.65, y: midY + 2 * amp),
+            control2: CGPoint(x: rect.width * 0.35, y: midY - 2 * amp)
+        )
+        return p
     }
 }

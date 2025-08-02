@@ -25,8 +25,8 @@ enum CardNumber: Int, CaseIterable {
 }
 
 // MARK: - Card Structure
-
-struct SetCard: Identifiable {
+/// Identifiable + Equatable so SwiftUI diffing & .animation(value:) work.
+struct SetCard: Identifiable, Equatable {
     var id: UUID
     var color: CardColor
     var symbol: CardSymbol

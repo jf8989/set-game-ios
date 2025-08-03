@@ -60,6 +60,8 @@ struct SetGameView: View {
                     - Select 3 cards you think form a Set.
                     - A Set means each property (color, symbol, shading, number) is all the same or all different.
                     - Tap to select/deselect. After 3 cards, see if you found a Set!
+                    - A Set! gives you +3 points.
+                    - A Mismatch gives you -1 points.
                     """
                 )
                 .font(.subheadline)

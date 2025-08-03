@@ -13,11 +13,13 @@ struct SetGameView: View {
     // Computed properties
 
     private var gameHeader: some View {
-        HStack {
-            score
-            Spacer()
+        VStack(spacing: 0) {
+            HStack {
+                score
+                Spacer()
+                cardsLeft
+            }
             gameTitle
-            Spacer()
         }
     }
 
@@ -26,7 +28,16 @@ struct SetGameView: View {
         if viewModel.hasStarted {
             Text("Score: \(viewModel.score)")
                 .font(.title2)
-                .padding(.top)
+                .padding(.trailing)
+        }
+    }
+
+    @ViewBuilder
+    private var cardsLeft: some View {
+        if viewModel.hasStarted {
+            Text("Cards left: \(viewModel.cardsLeft)")
+                .font(.title2)
+                .padding(.trailing)
         }
     }
 

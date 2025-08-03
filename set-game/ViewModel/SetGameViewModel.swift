@@ -43,7 +43,7 @@ extension SetGameViewModel {
     var tableCards: [SetCard] {
         model.tableCards
     }
-    
+
     var hasStarted: Bool {
         !tableCards.isEmpty
     }
@@ -59,4 +59,6 @@ extension SetGameViewModel {
     }
 
     var score: Int { model.score }
+
+    var cardsLeft: Int { model.deck.count }
 }

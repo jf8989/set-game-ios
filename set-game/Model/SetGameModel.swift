@@ -7,6 +7,7 @@ struct SetGameModel {
     private(set) var tableCards: [SetCard] = []
     private(set) var selectedCardIDs = Set<UUID>()
     private(set) var selectionStatus: SetSelectionStatus = .none
+    private(set) var score: Int = 0
 
     // MARK: - Deck Creation and Game Reset
 
@@ -83,9 +84,11 @@ struct SetGameModel {
             // If this returns true:
             if isSet(cards: selectedCards) {
                 selectionStatus = .found
+                score += 3
                 //                print("This is a SET!: TRUE")
             } else {
                 selectionStatus = .fail
+                score -= 1
                 //                print("This is NOT a SET!: FALSE")
             }
         } else {

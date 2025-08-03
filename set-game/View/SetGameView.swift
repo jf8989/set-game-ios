@@ -8,8 +8,27 @@ struct SetGameView: View {
     @StateObject private var viewModel = SetGameViewModel()
     @Namespace private var dealSpace
     @State private var showInstructions = true
+    @State private var showScore = false
 
     // Computed properties
+
+    private var gameHeader: some View {
+        HStack {
+            score
+            Spacer()
+            gameTitle
+            Spacer()
+        }
+    }
+
+    @ViewBuilder
+    private var score: some View {
+        if viewModel.hasStarted {
+            Text("Score: \(viewModel.score)")
+                .font(.title2)
+                .padding(.top)
+        }
+    }
 
     private var gameTitle: some View {
         Text("Set Game")
@@ -21,21 +40,23 @@ struct SetGameView: View {
 
     private var gameInstructions: some View {
         VStack(spacing: 8) {
-            Spacer()
-            Text("How to Play:")
-                .font(.headline)
-            Text(
-                """
-                - Select 3 cards you think form a Set.
-                - A Set means each property (color, symbol, shading, number) is all the same or all different.
-                - Tap to select/deselect. After 3 cards, see if you found a Set!
-                """
-            )
-            .font(.subheadline)
-            .foregroundColor(.secondary)
-            .multilineTextAlignment(.leading)
-            .lineLimit(nil)
-            .fixedSize(horizontal: false, vertical: true)
+            if !viewModel.hasStarted {
+                Spacer()
+                Text("How to Play:")
+                    .font(.headline)
+                Text(
+                    """
+                    - Select 3 cards you think form a Set.
+                    - A Set means each property (color, symbol, shading, number) is all the same or all different.
+                    - Tap to select/deselect. After 3 cards, see if you found a Set!
+                    """
+                )
+                .font(.subheadline)
+                .foregroundColor(.secondary)
+                .multilineTextAlignment(.leading)
+                .lineLimit(nil)
+                .fixedSize(horizontal: false, vertical: true)
+            }
         }
         .frame(maxWidth: 500)
         .padding(.horizontal)
@@ -83,6 +104,7 @@ struct SetGameView: View {
             Button("New Game") {
                 withAnimation { viewModel.startNewGame() }
                 showInstructions = false
+                showScore = true
             }
             Button("Deal 3 More") {
                 withAnimation { viewModel.dealThreeMore() }
@@ -97,10 +119,8 @@ struct SetGameView: View {
 
     var body: some View {
         VStack {
-            gameTitle
-            if showInstructions {
-                gameInstructions
-            }
+            gameHeader
+            gameInstructions
             cardGrid
             Spacer()
             actionButtons

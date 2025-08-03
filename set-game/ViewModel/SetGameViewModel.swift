@@ -7,23 +7,6 @@ class SetGameViewModel: ObservableObject {
     // When the model changes, the view will be notified.
     @Published private var model = SetGameModel()
 
-    // MARK: - Properties for the View to Read
-    // The View can read these properties to know how to draw itself.
-
-    var tableCards: [SetCard] {
-        model.tableCards
-    }
-
-    var selectedCardIDs: Set<UUID> {
-        model.selectedCardIDs
-    }
-    
-    var selectionStatus: SetSelectionStatus { model.selectionStatus }
-
-    var isDeckEmpty: Bool {
-        model.deck.isEmpty
-    }
-
     // MARK: - User Intents
 
     // Creates a new model and starts the game.
@@ -44,6 +27,7 @@ class SetGameViewModel: ObservableObject {
 
 }
 
+// MARK: - Properties for the View to Read
 extension SetGameViewModel {
     func color(for cardColor: CardColor) -> Color {
         switch cardColor {
@@ -52,4 +36,27 @@ extension SetGameViewModel {
         case .purple: return .purple
         }
     }
+}
+
+extension SetGameViewModel {
+    // The View can read these properties to know how to draw itself.
+    var tableCards: [SetCard] {
+        model.tableCards
+    }
+    
+    var hasStarted: Bool {
+        !tableCards.isEmpty
+    }
+
+    var selectedCardIDs: Set<UUID> {
+        model.selectedCardIDs
+    }
+
+    var selectionStatus: SetSelectionStatus { model.selectionStatus }
+
+    var isDeckEmpty: Bool {
+        model.deck.isEmpty
+    }
+
+    var score: Int { model.score }
 }

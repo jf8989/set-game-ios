@@ -6,8 +6,7 @@ struct SetGameModel {
     private(set) var deck: [SetCard] = []
     private(set) var tableCards: [SetCard] = []
     private(set) var selectedCardIDs = Set<UUID>()
-    private(set) var setFound: Bool = false  // true if last selection WAS a Set
-    private(set) var setFail: Bool = false  // true if last selection was NOT a Set
+    private(set) var selectionStatus: SetSelectionStatus = .none
 
     // MARK: - Deck Creation and Game Reset
 
@@ -27,11 +26,9 @@ struct SetGameModel {
                 }
             }
         }.shuffled()
-        print("Deck generated.")
         tableCards.removeAll()
         selectedCardIDs.removeAll()
-        setFound = false
-        setFail = false
+        selectionStatus = .none
         dealCards(for: 12)
     }
 
@@ -42,17 +39,15 @@ struct SetGameModel {
             tableCards.append(contentsOf: deck.prefix(cardsToDeal))
             deck.removeFirst(cardsToDeal)
         }
-        print("Dealing \(cardsToDeal) cards.")
     }
 
     /// Handles user selection and Set calculation logic.
     mutating func toggleSelection(for card: SetCard) {
         // If a Set was just found, remove and replace, then handle new selection.
-        if setFound {
+        if selectionStatus == .found {
             tableCards.removeAll { selectedCardIDs.contains($0.id) }
             selectedCardIDs.removeAll()
-            setFound = false
-            setFail = false
+            selectionStatus = .none
             dealCards(for: 3)
             // Select card if still present on table because this is a new selection attempt.
             if tableCards.contains(where: { $0.id == card.id }) {
@@ -62,10 +57,10 @@ struct SetGameModel {
         }
 
         // If last selection was a failed Set, deselect all and select the tapped card.
-        if setFail {
+        if selectionStatus == .fail {
             selectedCardIDs.removeAll()
             selectedCardIDs.insert(card.id)
-            setFail = false
+            selectionStatus = .none
             return
         }
 
@@ -87,17 +82,14 @@ struct SetGameModel {
             // Send them for evaluation.
             // If this returns true:
             if isSet(cards: selectedCards) {
-                setFound = true
-                setFail = false
-                print("This is a SET!: TRUE")
+                selectionStatus = .found
+                //                print("This is a SET!: TRUE")
             } else {
-                setFound = false
-                setFail = true
-                print("This is NOT a SET!: FALSE")
+                selectionStatus = .fail
+                //                print("This is NOT a SET!: FALSE")
             }
         } else {
-            setFound = false
-            setFail = false
+            selectionStatus = .none
         }
     }
 

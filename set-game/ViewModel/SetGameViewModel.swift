@@ -17,14 +17,8 @@ class SetGameViewModel: ObservableObject {
     var selectedCardIDs: Set<UUID> {
         model.selectedCardIDs
     }
-
-    var showSetSuccess: Bool {
-        model.setFound
-    }
-
-    var showSetFail: Bool {
-        model.setFail
-    }
+    
+    var selectionStatus: SetSelectionStatus { model.selectionStatus }
 
     var isDeckEmpty: Bool {
         model.deck.isEmpty

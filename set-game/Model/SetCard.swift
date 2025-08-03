@@ -9,9 +9,9 @@ enum CardColor: CaseIterable {
 }
 
 enum CardSymbol: String, CaseIterable {
-    case diamond = "◆"
-    case oval = "●"
-    case squiggle = "≃"
+    case diamond
+    case oval
+    case squiggle
 }
 
 enum CardShading: CaseIterable {
@@ -32,4 +32,9 @@ struct SetCard: Identifiable, Equatable {
     var symbol: CardSymbol
     var shading: CardShading
     var number: CardNumber
+}
+
+// MARK: - Card Set Eval Status
+enum SetSelectionStatus {
+    case none, found, fail
 }

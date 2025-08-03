@@ -122,7 +122,6 @@ struct SetGameView: View {
             gameHeader
             gameInstructions
             cardGrid
-            Spacer()
             actionButtons
         }
     }

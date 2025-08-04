@@ -95,9 +95,11 @@ struct SetGameModel {
             cardEvalStatus = .none
         }
     }
+}
 
-    // MARK: - Helpers
+// MARK: - Helpers [ Evaluates if a card is a set ]
 
+extension SetGameModel {
     private func isSet(cards: [SetCard]) -> Bool {
         guard cards.count == 3 else { return false }
         let colors = cards.map { $0.color }

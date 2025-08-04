@@ -5,7 +5,7 @@ import SwiftUI
 struct CardView: View {
     let card: SetCard
     let isSelected: Bool
-    let selectionStatus: SetEvalStatus
+    let setEvalStatus: SetEvalStatus
     let namespace: Namespace.ID  // animation
 
     @EnvironmentObject var viewModel: SetGameViewModel
@@ -13,7 +13,7 @@ struct CardView: View {
     // Border colour based on selection state
     private var borderColor: Color {
         guard isSelected else { return .primary }
-        switch selectionStatus {
+        switch setEvalStatus {
         case .found: return .green
         case .fail: return .red
         case .none: return .blue

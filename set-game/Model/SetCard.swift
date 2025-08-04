@@ -35,6 +35,6 @@ struct SetCard: Identifiable, Equatable {
 }
 
 // MARK: - Card Set Eval Status
-enum SetSelectionStatus {
+enum SetEvalStatus {
     case none, found, fail
 }

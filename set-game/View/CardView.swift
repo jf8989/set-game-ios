@@ -5,7 +5,7 @@ import SwiftUI
 struct CardView: View {
     let card: SetCard
     let isSelected: Bool
-    let selectionStatus: SetSelectionStatus
+    let selectionStatus: SetEvalStatus
     let namespace: Namespace.ID  // animation
 
     @EnvironmentObject var viewModel: SetGameViewModel

@@ -6,7 +6,7 @@ struct SetGameModel {
     private(set) var deck: [SetCard] = []
     private(set) var tableCards: [SetCard] = []
     private(set) var selectedCardIDs = Set<UUID>()
-    private(set) var cardEvalStatus: SetSelectionStatus = .none
+    private(set) var cardEvalStatus: SetEvalStatus = .none
     private(set) var score: Int = 0
 
     // MARK: - Deck Creation and Game Reset

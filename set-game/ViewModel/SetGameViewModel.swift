@@ -52,7 +52,7 @@ extension SetGameViewModel {
         model.selectedCardIDs
     }
 
-    var selectionStatus: SetSelectionStatus { model.selectionStatus }
+    var selectionStatus: SetSelectionStatus { model.cardEvalStatus }
 
     var isDeckEmpty: Bool {
         model.deck.isEmpty

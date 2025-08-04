@@ -6,7 +6,7 @@ struct SetGameModel {
     private(set) var deck: [SetCard] = []
     private(set) var tableCards: [SetCard] = []
     private(set) var selectedCardIDs = Set<UUID>()
-    private(set) var selectionStatus: SetSelectionStatus = .none
+    private(set) var cardEvalStatus: SetSelectionStatus = .none
     private(set) var score: Int = 0
 
     // MARK: - Deck Creation and Game Reset
@@ -29,7 +29,7 @@ struct SetGameModel {
         }.shuffled()
         tableCards.removeAll()
         selectedCardIDs.removeAll()
-        selectionStatus = .none
+        cardEvalStatus = .none
         dealCards(for: 12)
     }
 
@@ -45,10 +45,10 @@ struct SetGameModel {
     /// Handles user selection and Set calculation logic.
     mutating func toggleSelection(for card: SetCard) {
         // If a Set was just found, remove and replace, then handle new selection.
-        if selectionStatus == .found {
+        if cardEvalStatus == .found {
             tableCards.removeAll { selectedCardIDs.contains($0.id) }
             selectedCardIDs.removeAll()
-            selectionStatus = .none
+            cardEvalStatus = .none
             dealCards(for: 3)
             // Select card if still present on table because this is a new selection attempt.
             if tableCards.contains(where: { $0.id == card.id }) {
@@ -58,10 +58,10 @@ struct SetGameModel {
         }
 
         // If last selection was a failed Set, deselect all and select the tapped card.
-        if selectionStatus == .fail {
+        if cardEvalStatus == .fail {
             selectedCardIDs.removeAll()
             selectedCardIDs.insert(card.id)
-            selectionStatus = .none
+            cardEvalStatus = .none
             return
         }
 
@@ -83,16 +83,16 @@ struct SetGameModel {
             // Send them for evaluation.
             // If this returns true:
             if isSet(cards: selectedCards) {
-                selectionStatus = .found
+                cardEvalStatus = .found
                 score += 3
                 //                print("This is a SET!: TRUE")
             } else {
-                selectionStatus = .fail
+                cardEvalStatus = .fail
                 score -= 1
                 //                print("This is NOT a SET!: FALSE")
             }
         } else {
-            selectionStatus = .none
+            cardEvalStatus = .none
         }
     }
 

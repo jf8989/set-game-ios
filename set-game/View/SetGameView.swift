@@ -87,7 +87,7 @@ struct SetGameView: View {
                     CardView(
                         card: card,
                         isSelected: viewModel.selectedCardIDs.contains(card.id),
-                        selectionStatus: viewModel.setEvalStatus,
+                        setEvalStatus: viewModel.setEvalStatus,
                         namespace: dealSpace
                     )
                     .aspectRatio(2 / 3, contentMode: .fit)

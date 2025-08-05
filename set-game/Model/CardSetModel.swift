@@ -2,6 +2,16 @@
 
 import Foundation
 
+// MARK: - Card Structure (the card and its attributes)
+/// Identifiable + Equatable so SwiftUI diffing & .animation(value:) work.
+struct CardSet: Identifiable, Equatable {
+    var id: UUID
+    var color: CardColor
+    var symbol: CardSymbol
+    var shading: CardShading
+    var number: CardNumber
+}
+
 // MARK: - Card Attributes
 
 enum CardColor: CaseIterable {
@@ -22,16 +32,6 @@ enum CardNumber: Int, CaseIterable {
     case one = 1
     case two = 2
     case three = 3
-}
-
-// MARK: - Card Structure
-/// Identifiable + Equatable so SwiftUI diffing & .animation(value:) work.
-struct SetCard: Identifiable, Equatable {
-    var id: UUID
-    var color: CardColor
-    var symbol: CardSymbol
-    var shading: CardShading
-    var number: CardNumber
 }
 
 // MARK: - Card Set Eval Status

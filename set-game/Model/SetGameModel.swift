@@ -45,12 +45,15 @@ struct SetGameModel {
 
     /// Handles user selection and Set calculation logic.
     mutating func toggleSelection(for card: CardSet) {
-        // If a Set was just found, remove and replace, then handle new selection.
+        // When existing selection IS a Set:
         if cardEvalStatus == .found {
+            /// Move selected cards to discardPile array
+            let matchedCards = tableCards.filter { selectedCardIDs.contains($0.id)}
+            discardPile.append(contentsOf: matchedCards)
             tableCards.removeAll { selectedCardIDs.contains($0.id) }
+            /// Clear selection
             selectedCardIDs.removeAll()
             cardEvalStatus = .none
-            //            dealCards(for: 3)
             // Select card if still present on table because this is a new selection attempt.
             if tableCards.contains(where: { $0.id == card.id }) {
                 selectedCardIDs.insert(card.id)

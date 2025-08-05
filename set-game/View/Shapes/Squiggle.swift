@@ -22,3 +22,7 @@ struct Squiggle: Shape {
         return p
     }
 }
+
+#Preview {
+    Squiggle()
+}

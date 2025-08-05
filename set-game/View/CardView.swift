@@ -3,7 +3,7 @@
 import SwiftUI
 
 struct CardView: View {
-    let card: SetCard
+    let card: CardSet
     let isSelected: Bool
     let setEvalStatus: SetEvalStatus
     let namespace: Namespace.ID  // animation

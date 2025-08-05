@@ -16,7 +16,7 @@ class SetGameViewModel: ObservableObject {
     }
 
     // Passes the user's choice to the model.
-    func selectCard(_ card: SetCard) {
+    func selectCard(_ card: CardSet) {
         model.toggleSelection(for: card)
     }
 
@@ -40,7 +40,7 @@ extension SetGameViewModel {
 
 extension SetGameViewModel {
     // The View can read these properties to know how to draw itself.
-    var tableCards: [SetCard] {
+    var tableCards: [CardSet] {
         model.tableCards
     }
 

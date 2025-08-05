@@ -3,8 +3,9 @@
 import Foundation
 
 struct SetGameModel {
-    private(set) var deck: [SetCard] = []
-    private(set) var tableCards: [SetCard] = []
+    private(set) var deck: [CardSet] = []
+    private(set) var tableCards: [CardSet] = []
+    private(set) var discardPile: [CardSet] = []
     private(set) var selectedCardIDs = Set<UUID>()
     private(set) var cardEvalStatus: SetEvalStatus = .none
     private(set) var score: Int = 0
@@ -16,7 +17,7 @@ struct SetGameModel {
             CardSymbol.allCases.flatMap { symbol in
                 CardNumber.allCases.flatMap { number in
                     CardShading.allCases.map { shading in
-                        SetCard(
+                        CardSet(
                             id: UUID(),
                             color: color,
                             symbol: symbol,
@@ -43,13 +44,13 @@ struct SetGameModel {
     }
 
     /// Handles user selection and Set calculation logic.
-    mutating func toggleSelection(for card: SetCard) {
+    mutating func toggleSelection(for card: CardSet) {
         // If a Set was just found, remove and replace, then handle new selection.
         if cardEvalStatus == .found {
             tableCards.removeAll { selectedCardIDs.contains($0.id) }
             selectedCardIDs.removeAll()
             cardEvalStatus = .none
-            dealCards(for: 3)
+            //            dealCards(for: 3)
             // Select card if still present on table because this is a new selection attempt.
             if tableCards.contains(where: { $0.id == card.id }) {
                 selectedCardIDs.insert(card.id)
@@ -100,7 +101,7 @@ struct SetGameModel {
 // MARK: - Helpers [ Evaluates if a card is a set ]
 
 extension SetGameModel {
-    private func isSet(cards: [SetCard]) -> Bool {
+    private func isSet(cards: [CardSet]) -> Bool {
         guard cards.count == 3 else { return false }
         let colors = cards.map { $0.color }
         let symbols = cards.map { $0.symbol }

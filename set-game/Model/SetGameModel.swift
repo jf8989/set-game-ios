@@ -7,7 +7,7 @@ struct SetGameModel {
     private(set) var tableCards: [CardSet] = []
     private(set) var discardPile: [CardSet] = []
     private(set) var selectedCards: [CardSet] = []
-    private(set) var cardEvalStatus: SetEvalStatus = .none
+    private(set) var setEvalStatus: SetEvalStatus = .none
     private(set) var score: Int = 0
 
     init() {
@@ -20,14 +20,21 @@ struct SetGameModel {
         tableCards.removeAll()
         selectedCards.removeAll()
         discardPile.removeAll()
-        cardEvalStatus = .none
+        setEvalStatus = .none
         score = 0
         createDeckShuffleAndDeal()
     }
 
     /// Deals up to the specified number of cards from the deck to the table.
-    mutating func dealCards(for count: Int) {
-        let cardsToDeal = min(count, deck.count)
+    mutating func dealCards() {
+        let cardsToDeal = min(3, deck.count)
+        
+        switch setEvalStatus {
+        case .found: break
+        case .fail: break
+        case .none: break
+        }
+        
         if cardsToDeal > 0 {
             tableCards.append(contentsOf: deck.prefix(cardsToDeal))
             deck.removeFirst(cardsToDeal)
@@ -36,13 +43,13 @@ struct SetGameModel {
 
     /// Handles user selection and Set calculation logic.
     mutating func choose(this card: CardSet) {
-        switch cardEvalStatus {
+        switch setEvalStatus {
 
         // When existing selection IS a Set:
         case .found:
             guard selectedCards.count == 3 else { return }
             /// Discard cards by moving them to the pile
-            handleMatchedCards(when: true)
+            handleThreeSelectedCards()
             /// Morover, if the chosen card is on the table, select it.
             select(that: card)
 
@@ -50,7 +57,7 @@ struct SetGameModel {
         case .fail:
             guard selectedCards.count == 3 else { return }
             /// Clear existing selection
-            handleMatchedCards(when: false)
+            handleThreeSelectedCards()
             /// Select chosen card
             select(that: card)
 
@@ -68,11 +75,11 @@ struct SetGameModel {
             if selectedCards.count == 3 {
                 // If result is true:
                 if isSet(cards: selectedCards) {
-                    cardEvalStatus = .found
+                    setEvalStatus = .found
                     score += 3
                 } else {
                     // If result is false:
-                    cardEvalStatus = .fail
+                    setEvalStatus = .fail
                     score -= 1
                 }
             }
@@ -81,7 +88,7 @@ struct SetGameModel {
 
 }
 
-// MARK: - Helpers [ Evaluates if a card is a set ]
+// MARK: - Helpers
 
 /// Evaluates if a card is a set
 extension SetGameModel {
@@ -131,13 +138,13 @@ extension SetGameModel {
     }
 }
 
-/// Discards selected cards and moves them to discard pile
+/// Discards selected cards and moves them to discard pile based on Set evaluation
 extension SetGameModel {
-    private mutating func handleMatchedCards(when setFound: Bool) {
-        guard setFound else {
+    private mutating func handleThreeSelectedCards() {
+        guard setEvalStatus == .found else {
             /// Reset state
             selectedCards.removeAll()
-            cardEvalStatus = .none
+            setEvalStatus = .none
             return
         }
 
@@ -150,7 +157,7 @@ extension SetGameModel {
         }
 
         selectedCards.removeAll()
-        cardEvalStatus = .none
+        setEvalStatus = .none
 
     }
 }

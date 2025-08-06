@@ -22,7 +22,7 @@ class SetGameViewModel: ObservableObject {
 
     // Tells the model to deal more cards.
     func dealThreeMore() {
-        model.dealCards(for: 3)
+        model.dealCards(exactly: 3)
     }
 
 }
@@ -52,7 +52,7 @@ extension SetGameViewModel {
         model.selectedCards
     }
 
-    var setEvalStatus: SetEvalStatus { model.cardEvalStatus }
+    var setEvalStatus: SetEvalStatus { model.setEvalStatus }
 
     var isDeckEmpty: Bool {
         model.deck.isEmpty

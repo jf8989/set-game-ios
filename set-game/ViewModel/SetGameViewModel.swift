@@ -49,7 +49,7 @@ extension SetGameViewModel {
     }
 
     var selectedCardIDs: Set<UUID> {
-        model.selectedCardIDs
+        model.selectedCards
     }
 
     var setEvalStatus: SetEvalStatus { model.cardEvalStatus }

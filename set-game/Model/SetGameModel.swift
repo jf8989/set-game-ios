@@ -6,32 +6,23 @@ struct SetGameModel {
     private(set) var deck: [CardSet] = []
     private(set) var tableCards: [CardSet] = []
     private(set) var discardPile: [CardSet] = []
-    private(set) var selectedCardIDs = Set<UUID>()
+    private(set) var selectedCards: [CardSet] = []
     private(set) var cardEvalStatus: SetEvalStatus = .none
     private(set) var score: Int = 0
+
+    init() {
+        generateDeck()
+    }
 
     // MARK: - Deck Creation and Game Reset
 
     mutating func generateDeck() {
-        deck = CardColor.allCases.flatMap { color in
-            CardSymbol.allCases.flatMap { symbol in
-                CardNumber.allCases.flatMap { number in
-                    CardShading.allCases.map { shading in
-                        CardSet(
-                            id: UUID(),
-                            color: color,
-                            symbol: symbol,
-                            shading: shading,
-                            number: number
-                        )
-                    }
-                }
-            }
-        }.shuffled()
         tableCards.removeAll()
-        selectedCardIDs.removeAll()
+        selectedCards.removeAll()
+        discardPile.removeAll()
         cardEvalStatus = .none
-        dealCards(for: 12)
+        score = 0
+        createDeckShuffleAndDeal()
     }
 
     /// Deals up to the specified number of cards from the deck to the table.
@@ -48,41 +39,43 @@ struct SetGameModel {
         // When existing selection IS a Set:
         if cardEvalStatus == .found {
             /// Move selected cards to discardPile array
-            let matchedCards = tableCards.filter { selectedCardIDs.contains($0.id)}
+            let matchedCards = tableCards.filter {
+                selectedCards.contains($0.id)
+            }
             discardPile.append(contentsOf: matchedCards)
-            tableCards.removeAll { selectedCardIDs.contains($0.id) }
+            tableCards.removeAll { selectedCards.contains($0.id) }
             /// Clear selection
-            selectedCardIDs.removeAll()
+            selectedCards.removeAll()
             cardEvalStatus = .none
             // Select card if still present on table because this is a new selection attempt.
             if tableCards.contains(where: { $0.id == card.id }) {
-                selectedCardIDs.insert(card.id)
+                selectedCards.insert(card.id)
             }
             return
         }
 
         // If last selection was a failed Set, deselect all and select the tapped card.
         if cardEvalStatus == .fail {
-            selectedCardIDs.removeAll()
-            selectedCardIDs.insert(card.id)
+            selectedCards.removeAll()
+            selectedCards.insert(card.id)
             cardEvalStatus = .none
             return
         }
 
         // Standard select/deselect logic before we even evaluate if it's a set.
         // When the user wants to deselect a card:
-        if selectedCardIDs.contains(card.id) {
-            selectedCardIDs.remove(card.id)
+        if selectedCards.contains(card.id) {
+            selectedCards.remove(card.id)
         } else {
             // When the user selects a new card. (not yet 3)
-            selectedCardIDs.insert(card.id)
+            selectedCards.insert(card.id)
         }
 
         // Only check for Set if exactly 3 selected.
-        if selectedCardIDs.count == 3 {
+        if selectedCards.count == 3 {
             // Find the selected cards on the table by ID.
             let selectedCards = tableCards.filter {
-                selectedCardIDs.contains($0.id)
+                selectedCards.contains($0.id)
             }
             // Send them for evaluation.
             // If this returns true:
@@ -103,6 +96,7 @@ struct SetGameModel {
 
 // MARK: - Helpers [ Evaluates if a card is a set ]
 
+/// Evaluates if a card is a set
 extension SetGameModel {
     private func isSet(cards: [CardSet]) -> Bool {
         guard cards.count == 3 else { return false }
@@ -120,5 +114,32 @@ extension SetGameModel {
     private func allSameOrAllDifferent<T: Hashable>(_ values: [T]) -> Bool {
         let unique = Set(values)
         return unique.count == 1 || unique.count == 3
+    }
+}
+
+/// Creates and shuffles the full deck, then deals 12 cards
+extension SetGameModel {
+    private mutating func createDeckShuffleAndDeal() {
+        deck = CardColor.allCases.flatMap { color in
+            CardSymbol.allCases.flatMap { symbol in
+                CardNumber.allCases.flatMap { number in
+                    CardShading.allCases.map { shading in
+                        CardSet(
+                            id: UUID(),
+                            color: color,
+                            symbol: symbol,
+                            shading: shading,
+                            number: number
+                        )
+                    }
+                }
+            }
+        }.shuffled()
+        dealInitialCards()
+    }
+
+    private mutating func dealInitialCards() {
+        tableCards.append(contentsOf: deck.prefix(12))
+        deck.removeFirst(12)
     }
 }

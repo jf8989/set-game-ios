@@ -35,63 +35,50 @@ struct SetGameModel {
     }
 
     /// Handles user selection and Set calculation logic.
-    mutating func toggleSelection(for card: CardSet) {
+    mutating func choose(this card: CardSet) {
+        switch cardEvalStatus {
+
         // When existing selection IS a Set:
-        if cardEvalStatus == .found {
-            /// Move selected cards to discardPile array
-            let matchedCards = tableCards.filter {
-                selectedCards.contains($0.id)
-            }
-            discardPile.append(contentsOf: matchedCards)
-            tableCards.removeAll { selectedCards.contains($0.id) }
-            /// Clear selection
-            selectedCards.removeAll()
-            cardEvalStatus = .none
-            // Select card if still present on table because this is a new selection attempt.
-            if tableCards.contains(where: { $0.id == card.id }) {
-                selectedCards.insert(card.id)
-            }
-            return
-        }
+        case .found:
+            guard selectedCards.count == 3 else { return }
+            /// Discard cards by moving them to the pile
+            handleMatchedCards(when: true)
+            /// Morover, if the chosen card is on the table, select it.
+            select(that: card)
 
-        // If last selection was a failed Set, deselect all and select the tapped card.
-        if cardEvalStatus == .fail {
-            selectedCards.removeAll()
-            selectedCards.insert(card.id)
-            cardEvalStatus = .none
-            return
-        }
+        // When existing selection ISN'T a Set:
+        case .fail:
+            guard selectedCards.count == 3 else { return }
+            /// Clear existing selection
+            handleMatchedCards(when: false)
+            /// Select chosen card
+            select(that: card)
 
-        // Standard select/deselect logic before we even evaluate if it's a set.
-        // When the user wants to deselect a card:
-        if selectedCards.contains(card.id) {
-            selectedCards.remove(card.id)
-        } else {
-            // When the user selects a new card. (not yet 3)
-            selectedCards.insert(card.id)
-        }
+        // Normal selection:
+        case .none:
+            /// If user taps on a selected card, deselect it.
+            if let index = selectedCards.firstIndex(where: { $0.id == card.id })
+            {
+                selectedCards.remove(at: index)
+            } else if selectedCards.count < 3 {
+                select(that: card)
+            }
 
-        // Only check for Set if exactly 3 selected.
-        if selectedCards.count == 3 {
-            // Find the selected cards on the table by ID.
-            let selectedCards = tableCards.filter {
-                selectedCards.contains($0.id)
+            /// Evaluate the selected set:
+            if selectedCards.count == 3 {
+                // If result is true:
+                if isSet(cards: selectedCards) {
+                    cardEvalStatus = .found
+                    score += 3
+                } else {
+                    // If result is false:
+                    cardEvalStatus = .fail
+                    score -= 1
+                }
             }
-            // Send them for evaluation.
-            // If this returns true:
-            if isSet(cards: selectedCards) {
-                cardEvalStatus = .found
-                score += 3
-                //                print("This is a SET!: TRUE")
-            } else {
-                cardEvalStatus = .fail
-                score -= 1
-                //                print("This is NOT a SET!: FALSE")
-            }
-        } else {
-            cardEvalStatus = .none
         }
     }
+
 }
 
 // MARK: - Helpers [ Evaluates if a card is a set ]
@@ -141,5 +128,37 @@ extension SetGameModel {
     private mutating func dealInitialCards() {
         tableCards.append(contentsOf: deck.prefix(12))
         deck.removeFirst(12)
+    }
+}
+
+/// Discards selected cards and moves them to discard pile
+extension SetGameModel {
+    private mutating func handleMatchedCards(when setFound: Bool) {
+        guard setFound else {
+            /// Reset state
+            selectedCards.removeAll()
+            cardEvalStatus = .none
+            return
+        }
+
+        /// Add selected cards to discard pile
+        discardPile.append(contentsOf: selectedCards)
+
+        /// Remove selected cards from the table
+        tableCards.removeAll { cardOnTable in
+            selectedCards.contains(where: { $0.id == cardOnTable.id })
+        }
+
+        selectedCards.removeAll()
+        cardEvalStatus = .none
+
+    }
+}
+
+/// Selects the chosen card
+extension SetGameModel {
+    mutating func select(that card: CardSet) {
+        guard tableCards.contains(where: { $0.id == card.id }) else { return }
+        selectedCards.append(card)
     }
 }

@@ -17,7 +17,7 @@ class SetGameViewModel: ObservableObject {
 
     // Passes the user's choice to the model.
     func selectCard(_ card: CardSet) {
-        model.toggleSelection(for: card)
+        model.choose(this: card)
     }
 
     // Tells the model to deal more cards.
@@ -48,7 +48,7 @@ extension SetGameViewModel {
         !tableCards.isEmpty
     }
 
-    var selectedCardIDs: Set<UUID> {
+    var selectedCardIDs: [CardSet] {
         model.selectedCards
     }
 

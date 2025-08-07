@@ -29,7 +29,7 @@ struct SetGame {
         discardPile.removeAll()
         setEvalStatus = .none
         score = 0
-        deck = DeckFactory.createDeckShuffleAndDeal()
+        deck = DeckFactory.createShuffledDeck()
         dealInitialCards()
     }
 
@@ -183,9 +183,9 @@ extension SetGame {
         }
 
         /// 4. Moves the selected cards to the discard pile.
-        discardPile.append(contentsOf: selectedCards)
+        discardPile.append(contentsOf: cardsToReplace)
 
-        /// 4. Clears selection.
+        /// 5. Clears selection.
         clearSelection()
     }
 }

@@ -5,7 +5,7 @@ import Foundation
 /// Main logic for the Set card game model.
 struct SetGameModel {
     // MARK: - Properties
-    
+
     var deck: [CardSet] = []
     var tableCards: [CardSet] = []
     var discardPile: [CardSet] = []
@@ -14,7 +14,7 @@ struct SetGameModel {
     var score: Int = 0
 
     // MARK: - Initialization
-    
+
     init() {
         generateDeck()
     }
@@ -35,19 +35,15 @@ struct SetGameModel {
     mutating func dealCards() {
 
         switch setEvalStatus {
-        case .found: break
-        case .fail:
-            if cardsToDeal > 0 {
-                tableCards.append(contentsOf: deck.prefix(cardsToDeal))
-                deck.removeFirst(cardsToDeal)
-            }
-        case .none: break
-        }
+        case .found: drawAndReplaceMatchedCards()
+        case .fail: normalDraw()
+        case .none: normalDraw()
 
+        }
     }
 
     // MARK: - Selection Logic
-    
+
     /// Handles user selection and Set calculation logic.
     mutating func choose(this card: CardSet) {
         switch setEvalStatus {
@@ -149,8 +145,8 @@ extension SetGameModel {
 
 // MARK: - Selection/Discard Helpers
 
-/// Discards selected cards and moves them to discard pile based on Set evaluation
 extension SetGameModel {
+    /// Discards selected cards and moves them to discard pile based on Set evaluation
     private mutating func handleThreeSelectedCards() {
         guard setEvalStatus == .found else {
             /// Reset state
@@ -167,23 +163,26 @@ extension SetGameModel {
             selectedCards.contains(where: { $0.id == cardOnTable.id })
         }
 
-        selectedCards.removeAll()
-        setEvalStatus = .none
-
+        clearSelection()
     }
-}
 
-/// Selects the chosen card
-extension SetGameModel {
+    /// Selects the chosen card
     private mutating func select(that card: CardSet) {
         guard tableCards.contains(where: { $0.id == card.id }) else { return }
         selectedCards.append(card)
+    }
+
+    /// Clears selection
+    private mutating func clearSelection() {
+        selectedCards.removeAll()
+        setEvalStatus = .none
     }
 }
 
 // MARK: - Draw Helpers
 
 extension SetGameModel {
+    ///  Appends cards to the table.
     private mutating func normalDraw() {
         let cardsToDeal = min(3, deck.count)
 
@@ -193,7 +192,32 @@ extension SetGameModel {
         }
     }
 
-    private mutating func drawAndReplaceMatched() {
+    /// Finds the indices of the 3 matched cards on the table.
+    private mutating func drawAndReplaceMatchedCards() {
+        /// 1. Purposely renames my card reference for the current intent.
+        let cardsToReplace: [CardSet] = selectedCards
 
+        /// 2. Finds the indices of the matched cards on the table.
+        let matchedIndices = cardsToReplace.compactMap { matchedCard in
+            tableCards.firstIndex(where: { $0.id == matchedCard.id })
+        }
+
+        /// 3. Replaces cards at those indices with new ones from the deck.
+        for index in matchedIndices {
+            if !deck.isEmpty {
+                tableCards[index] = deck.removeFirst()
+            }
+        }
+
+        /// In case the deck is empty, makes sure to remove the remaining selected cards from the table.
+        tableCards.removeAll { cardOnTable in
+            cardsToReplace.contains(where: { $0.id == cardOnTable.id })
+        }
+
+        /// 4. Moves the selected cards to the discard pile.
+        discardPile.append(contentsOf: selectedCards)
+
+        /// 4. Clears selection.
+        clearSelection()
     }
 }

@@ -2,7 +2,10 @@
 
 import Foundation
 
+/// Main logic for the Set card game model.
 struct SetGameModel {
+    // MARK: - Properties
+    
     var deck: [CardSet] = []
     var tableCards: [CardSet] = []
     var discardPile: [CardSet] = []
@@ -10,12 +13,15 @@ struct SetGameModel {
     var setEvalStatus: SetEvalStatus = .none
     var score: Int = 0
 
+    // MARK: - Initialization
+    
     init() {
         generateDeck()
     }
 
     // MARK: - Deck Creation and Game Reset
 
+    /// Regenerates and shuffles the deck, resets all game state.
     mutating func generateDeck() {
         tableCards.removeAll()
         selectedCards.removeAll()
@@ -40,6 +46,8 @@ struct SetGameModel {
 
     }
 
+    // MARK: - Selection Logic
+    
     /// Handles user selection and Set calculation logic.
     mutating func choose(this card: CardSet) {
         switch setEvalStatus {
@@ -87,7 +95,36 @@ struct SetGameModel {
 
 }
 
-// MARK: - Helpers
+// MARK: - Deck Management Helpers
+
+/// Creates and shuffles the full deck, then deals 12 cards
+extension SetGameModel {
+    mutating func createDeckShuffleAndDeal() {
+        deck = CardColor.allCases.flatMap { color in
+            CardSymbol.allCases.flatMap { symbol in
+                CardNumber.allCases.flatMap { number in
+                    CardShading.allCases.map { shading in
+                        CardSet(
+                            id: UUID(),
+                            color: color,
+                            symbol: symbol,
+                            shading: shading,
+                            number: number
+                        )
+                    }
+                }
+            }
+        }.shuffled()
+        dealInitialCards()
+    }
+
+    mutating func dealInitialCards() {
+        tableCards.append(contentsOf: deck.prefix(12))
+        deck.removeFirst(12)
+    }
+}
+
+// MARK: - Set Evaluation Helpers
 
 /// Evaluates if a card is a set
 extension SetGameModel {
@@ -109,6 +146,8 @@ extension SetGameModel {
         return unique.count == 1 || unique.count == 3
     }
 }
+
+// MARK: - Selection/Discard Helpers
 
 /// Discards selected cards and moves them to discard pile based on Set evaluation
 extension SetGameModel {
@@ -141,6 +180,8 @@ extension SetGameModel {
         selectedCards.append(card)
     }
 }
+
+// MARK: - Draw Helpers
 
 extension SetGameModel {
     private mutating func normalDraw() {

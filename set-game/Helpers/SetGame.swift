@@ -3,7 +3,7 @@
 import Foundation
 
 /// Main rules for the Set card game.
-/// 
+
 struct SetGame {
     // MARK: - Properties
 
@@ -13,7 +13,7 @@ struct SetGame {
     var selectedCards: [CardSet] = []
     var setEvalStatus: SetEvalStatus = .none
     var score: Int = 0
-
+    
     // MARK: - Initialization
 
     init() {
@@ -29,7 +29,8 @@ struct SetGame {
         discardPile.removeAll()
         setEvalStatus = .none
         score = 0
-        createDeckShuffleAndDeal()
+        deck = DeckFactory.createDeckShuffleAndDeal()
+        dealInitialCards()
     }
 
     // MARK: - Dealing Logic
@@ -104,25 +105,6 @@ struct SetGame {
 
 /// Creates and shuffles the full deck, then deals 12 cards
 extension SetGame {
-    mutating func createDeckShuffleAndDeal() {
-        deck = CardColor.allCases.flatMap { color in
-            CardSymbol.allCases.flatMap { symbol in
-                CardNumber.allCases.flatMap { number in
-                    CardShading.allCases.map { shading in
-                        CardSet(
-                            id: UUID(),
-                            color: color,
-                            symbol: symbol,
-                            shading: shading,
-                            number: number
-                        )
-                    }
-                }
-            }
-        }.shuffled()
-        dealInitialCards()
-    }
-
     mutating func dealInitialCards() {
         tableCards.append(contentsOf: deck.prefix(12))
         deck.removeFirst(12)

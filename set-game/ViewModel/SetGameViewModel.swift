@@ -5,33 +5,33 @@ import SwiftUI
 
 class SetGameViewModel: ObservableObject {
     // When the model changes, the view will be notified.
-    @Published private var model = SetGameModel()
+    @Published private var game = SetGame()
 
     // MARK: - Model Accessors (View State)
 
     /// The View can read these properties to know how to draw itself.
 
-    var deck: [CardSet] { model.deck }
+    var deck: [CardSet] { game.deck }
 
-    var tableCards: [CardSet] { model.tableCards }
+    var tableCards: [CardSet] { game.tableCards }
 
-    var discardPile: [CardSet] { model.discardPile }
+    var discardPile: [CardSet] { game.discardPile }
 
-    var selectedCards: [CardSet] { model.selectedCards }
+    var selectedCards: [CardSet] { game.selectedCards }
 
-    var setEvalStatus: SetEvalStatus { model.setEvalStatus }
+    var setEvalStatus: SetEvalStatus { game.setEvalStatus }
 
-    var isDeckEmpty: Bool { model.deck.isEmpty }
+    var isDeckEmpty: Bool { game.deck.isEmpty }
 
-    var score: Int { model.score }
+    var score: Int { game.score }
 
-    var cardsLeft: Int { model.deck.count }
+    var cardsLeft: Int { game.deck.count }
 
     // MARK: - View Helper Methods
 
     /// Calculates if a tapped card is actually selected
     func isSelected(card: CardSet) -> Bool {
-        model.selectedCards.contains { $0.id == card.id }
+        game.selectedCards.contains { $0.id == card.id }
     }
 
     /// Interprets the right model color for the view
@@ -47,22 +47,22 @@ class SetGameViewModel: ObservableObject {
 
     /// Creates a brand-new instance of the model to guarantee FULL RESET
     func startNewGame() {
-        model = SetGameModel()
+        game = SetGame()
     }
 
     /// Passes the user's choice to the model.
     func select(this card: CardSet) {
-        model.choose(this: card)
+        game.choose(this: card)
     }
 
     /// Tells the model to deal more cards.
     func dealThreeMore() {
-        model.dealCards()
+        game.dealCards()
     }
 
     /// Shuffles visible cards
     func shuffleTableCards() {
-        model.shuffleTableCards()
+        game.shuffleTableCards()
     }
 
 }

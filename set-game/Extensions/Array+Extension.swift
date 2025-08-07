@@ -1,4 +1,4 @@
-//  Model/Array+Extension.swift
+//  Extensions/Array+Extension.swift
 
 import Foundation
 
@@ -23,6 +23,6 @@ extension Array where Element == CardSet {
 extension Array where Element: Hashable {
     var allSameOrAllDifferent: Bool {
         let unique = Set(self)
-        return unique.count == 1 || unique.count == 3
+        return unique.count == 1 || unique.count == self.count
     }
 }

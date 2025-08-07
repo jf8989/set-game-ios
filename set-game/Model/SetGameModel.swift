@@ -79,7 +79,7 @@ struct SetGameModel {
             /// Evaluate the selected set:
             if selectedCards.count == 3 {
                 // If result is true:
-                if isSet(cards: selectedCards) {
+                if selectedCards.isSet {
                     setEvalStatus = .found
                     score += 3
                 } else {
@@ -92,7 +92,7 @@ struct SetGameModel {
     }
 
     // MARK: - Shuffle Logic
-    
+
     mutating func shuffleTableCards() {
         tableCards.shuffle()
     }
@@ -125,29 +125,6 @@ extension SetGameModel {
     mutating func dealInitialCards() {
         tableCards.append(contentsOf: deck.prefix(12))
         deck.removeFirst(12)
-    }
-}
-
-// MARK: - Set Evaluation Helpers
-
-/// Evaluates if a card is a set
-extension SetGameModel {
-    private func isSet(cards: [CardSet]) -> Bool {
-        guard cards.count == 3 else { return false }
-        let colors = cards.map { $0.color }
-        let symbols = cards.map { $0.symbol }
-        let numbers = cards.map { $0.number.rawValue }
-        let shadings = cards.map { $0.shading }
-
-        return allSameOrAllDifferent(colors)
-            && allSameOrAllDifferent(symbols)
-            && allSameOrAllDifferent(numbers)
-            && allSameOrAllDifferent(shadings)
-    }
-
-    private func allSameOrAllDifferent<T: Hashable>(_ values: [T]) -> Bool {
-        let unique = Set(values)
-        return unique.count == 1 || unique.count == 3
     }
 }
 

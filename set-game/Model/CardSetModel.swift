@@ -4,7 +4,7 @@ import Foundation
 
 // MARK: - Card Structure (the card and its attributes)
 /// Identifiable + Equatable so SwiftUI diffing & .animation(value:) work.
-struct CardSet: Identifiable, Equatable {
+struct CardSet: Identifiable, Equatable, Hashable {
     var id: UUID
     var color: CardColor
     var symbol: CardSymbol
@@ -14,21 +14,21 @@ struct CardSet: Identifiable, Equatable {
 
 // MARK: - Card Attributes
 
-enum CardColor: CaseIterable {
+enum CardColor: CaseIterable, Hashable {
     case red, green, purple
 }
 
-enum CardSymbol: String, CaseIterable {
+enum CardSymbol: String, CaseIterable, Hashable {
     case diamond
     case oval
     case squiggle
 }
 
-enum CardShading: CaseIterable {
+enum CardShading: CaseIterable, Hashable {
     case solid, open, striped
 }
 
-enum CardNumber: Int, CaseIterable {
+enum CardNumber: Int, CaseIterable, Hashable {
     case one = 1
     case two = 2
     case three = 3

@@ -3,15 +3,14 @@
 import Foundation
 import SwiftUI
 
-// MARK: - Main ViewModel Body
-
 class SetGameViewModel: ObservableObject {
     // When the model changes, the view will be notified.
     @Published private var model = SetGameModel()
 
     // MARK: - Model Accessors (View State)
 
-    // The View can read these properties to know how to draw itself.
+    /// The View can read these properties to know how to draw itself.
+
     var deck: [CardSet] { model.deck }
 
     var tableCards: [CardSet] { model.tableCards }
@@ -30,11 +29,12 @@ class SetGameViewModel: ObservableObject {
 
     // MARK: - View Helper Methods
 
-    /// Creates a brand-new instance of the model to guarantee FULL RESET
+    /// Calculates if a tapped card is actually selected
     func isSelected(card: CardSet) -> Bool {
         model.selectedCards.contains { $0.id == card.id }
     }
 
+    /// Interprets the right model color for the view
     func color(for cardColor: CardColor) -> Color {
         switch cardColor {
         case .red: return .red
@@ -45,21 +45,22 @@ class SetGameViewModel: ObservableObject {
 
     // MARK: - User Intents
 
-    // Creates a new model and starts the game.
+    /// Creates a brand-new instance of the model to guarantee FULL RESET
     func startNewGame() {
         model = SetGameModel()
     }
 
-    // Passes the user's choice to the model.
+    /// Passes the user's choice to the model.
     func select(this card: CardSet) {
         model.choose(this: card)
     }
 
-    // Tells the model to deal more cards.
+    /// Tells the model to deal more cards.
     func dealThreeMore() {
         model.dealCards()
     }
 
+    /// Shuffles visible cards
     func shuffleTableCards() {
         model.shuffleTableCards()
     }

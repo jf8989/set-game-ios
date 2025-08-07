@@ -31,6 +31,8 @@ struct SetGameModel {
         createDeckShuffleAndDeal()
     }
 
+    // MARK: - Dealing Logic
+
     /// Deals up to the specified number of cards from the deck to the table.
     mutating func dealCards() {
 
@@ -87,6 +89,12 @@ struct SetGameModel {
                 }
             }
         }
+    }
+
+    // MARK: - Shuffle Logic
+    
+    mutating func shuffleTableCards() {
+        tableCards.shuffle()
     }
 
 }

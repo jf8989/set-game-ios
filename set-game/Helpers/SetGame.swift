@@ -1,4 +1,4 @@
-// Model/SetGameModel.swift
+// Model/SetGame.swift
 
 import Foundation
 

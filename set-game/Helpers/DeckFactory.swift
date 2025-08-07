@@ -2,6 +2,7 @@
 
 import Foundation
 
+/// Creates an 81-card deck + shuffles it.
 struct DeckFactory {
     static func createDeckShuffleAndDeal() -> [CardSet] {
         CardColor.allCases.flatMap { color in

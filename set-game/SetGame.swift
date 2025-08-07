@@ -2,8 +2,8 @@
 
 import Foundation
 
-/// Main logic for the Set card game model.
-struct SetGameModel {
+/// Main rules for the Set card game.
+struct SetGame {
     // MARK: - Properties
 
     var deck: [CardSet] = []
@@ -102,7 +102,7 @@ struct SetGameModel {
 // MARK: - Deck Management Helpers
 
 /// Creates and shuffles the full deck, then deals 12 cards
-extension SetGameModel {
+extension SetGame {
     mutating func createDeckShuffleAndDeal() {
         deck = CardColor.allCases.flatMap { color in
             CardSymbol.allCases.flatMap { symbol in
@@ -130,7 +130,7 @@ extension SetGameModel {
 
 // MARK: - Selection/Discard Helpers
 
-extension SetGameModel {
+extension SetGame {
     /// Discards selected cards and moves them to discard pile based on Set evaluation
     private mutating func handleThreeSelectedCards() {
         guard setEvalStatus == .found else {
@@ -166,7 +166,7 @@ extension SetGameModel {
 
 // MARK: - Draw Helpers
 
-extension SetGameModel {
+extension SetGame {
     ///  Appends cards to the table.
     private mutating func normalDraw() {
         let cardsToDeal = min(3, deck.count)

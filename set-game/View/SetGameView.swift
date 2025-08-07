@@ -9,6 +9,7 @@ struct SetGameView: View {
     @Namespace private var dealSpace
     @State private var showInstructions = true
     @State private var showScore = false
+    @State private var hasGameStarted = false
 
     // Computed properties
 

@@ -9,41 +9,8 @@ class SetGameViewModel: ObservableObject {
     // When the model changes, the view will be notified.
     @Published private var model = SetGameModel()
 
-    // MARK: - User Intent Functions
+    // MARK: - Model Accessors (View State)
 
-    // Creates a new model and starts the game.
-    func startNewGame() {
-        model = SetGameModel()
-        model.generateDeck()
-    }
-
-    // Passes the user's choice to the model.
-    func selectCard(_ card: CardSet) {
-        model.choose(this: card)
-    }
-
-    // Tells the model to deal more cards.
-    func dealThreeMore() {
-        model.dealCards()
-    }
-
-}
-
-// MARK: - Color Properties
-
-extension SetGameViewModel {
-    func color(for cardColor: CardColor) -> Color {
-        switch cardColor {
-        case .red: return .red
-        case .green: return .green
-        case .purple: return .purple
-        }
-    }
-}
-
-// MARK: - Reactive State Properties
-
-extension SetGameViewModel {
     // The View can read these properties to know how to draw itself.
     var deck: [CardSet] { model.deck }
 
@@ -51,9 +18,7 @@ extension SetGameViewModel {
 
     var discardPile: [CardSet] { model.discardPile }
 
-    var hasStarted: Bool { !tableCards.isEmpty }
-
-    var selectedCardIDs: [CardSet] { model.selectedCards }
+    var selectedCards: [CardSet] { model.selectedCards }
 
     var setEvalStatus: SetEvalStatus { model.setEvalStatus }
 
@@ -62,4 +27,41 @@ extension SetGameViewModel {
     var score: Int { model.score }
 
     var cardsLeft: Int { model.deck.count }
+
+    // MARK: - View Helper Methods
+
+    /// Creates a brand-new instance of the model to guarantee FULL RESET
+    func isSelected(card: CardSet) -> Bool {
+        model.selectedCards.contains { $0.id == card.id }
+    }
+
+    func color(for cardColor: CardColor) -> Color {
+        switch cardColor {
+        case .red: return .red
+        case .green: return .green
+        case .purple: return .purple
+        }
+    }
+
+    // MARK: - User Intents
+
+    // Creates a new model and starts the game.
+    func startNewGame() {
+        model = SetGameModel()
+    }
+
+    // Passes the user's choice to the model.
+    func select(this card: CardSet) {
+        model.choose(this: card)
+    }
+
+    // Tells the model to deal more cards.
+    func dealThreeMore() {
+        model.dealCards()
+    }
+
+    func shuffleTableCards() {
+        model.shuffleTableCards()
+    }
+
 }

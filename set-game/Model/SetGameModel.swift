@@ -3,12 +3,12 @@
 import Foundation
 
 struct SetGameModel {
-    private(set) var deck: [CardSet] = []
-    private(set) var tableCards: [CardSet] = []
-    private(set) var discardPile: [CardSet] = []
-    private(set) var selectedCards: [CardSet] = []
-    private(set) var setEvalStatus: SetEvalStatus = .none
-    private(set) var score: Int = 0
+    var deck: [CardSet] = []
+    var tableCards: [CardSet] = []
+    var discardPile: [CardSet] = []
+    var selectedCards: [CardSet] = []
+    var setEvalStatus: SetEvalStatus = .none
+    var score: Int = 0
 
     init() {
         generateDeck()
@@ -27,18 +27,17 @@ struct SetGameModel {
 
     /// Deals up to the specified number of cards from the deck to the table.
     mutating func dealCards() {
-        let cardsToDeal = min(3, deck.count)
-        
+
         switch setEvalStatus {
         case .found: break
-        case .fail: break
+        case .fail:
+            if cardsToDeal > 0 {
+                tableCards.append(contentsOf: deck.prefix(cardsToDeal))
+                deck.removeFirst(cardsToDeal)
+            }
         case .none: break
         }
-        
-        if cardsToDeal > 0 {
-            tableCards.append(contentsOf: deck.prefix(cardsToDeal))
-            deck.removeFirst(cardsToDeal)
-        }
+
     }
 
     /// Handles user selection and Set calculation logic.
@@ -111,33 +110,6 @@ extension SetGameModel {
     }
 }
 
-/// Creates and shuffles the full deck, then deals 12 cards
-extension SetGameModel {
-    private mutating func createDeckShuffleAndDeal() {
-        deck = CardColor.allCases.flatMap { color in
-            CardSymbol.allCases.flatMap { symbol in
-                CardNumber.allCases.flatMap { number in
-                    CardShading.allCases.map { shading in
-                        CardSet(
-                            id: UUID(),
-                            color: color,
-                            symbol: symbol,
-                            shading: shading,
-                            number: number
-                        )
-                    }
-                }
-            }
-        }.shuffled()
-        dealInitialCards()
-    }
-
-    private mutating func dealInitialCards() {
-        tableCards.append(contentsOf: deck.prefix(12))
-        deck.removeFirst(12)
-    }
-}
-
 /// Discards selected cards and moves them to discard pile based on Set evaluation
 extension SetGameModel {
     private mutating func handleThreeSelectedCards() {
@@ -164,8 +136,23 @@ extension SetGameModel {
 
 /// Selects the chosen card
 extension SetGameModel {
-    mutating func select(that card: CardSet) {
+    private mutating func select(that card: CardSet) {
         guard tableCards.contains(where: { $0.id == card.id }) else { return }
         selectedCards.append(card)
+    }
+}
+
+extension SetGameModel {
+    private mutating func normalDraw() {
+        let cardsToDeal = min(3, deck.count)
+
+        if cardsToDeal > 0 {
+            tableCards.append(contentsOf: deck.prefix(cardsToDeal))
+            deck.removeFirst(cardsToDeal)
+        }
+    }
+
+    private mutating func drawAndReplaceMatched() {
+
     }
 }

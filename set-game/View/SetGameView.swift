@@ -2,16 +2,15 @@
 
 import SwiftUI
 
-// MARK: - Top-level screen
-
 struct SetGameView: View {
+
+    // MARK: - State Properties
+
     @StateObject private var viewModel = SetGameViewModel()
     @Namespace private var dealSpace
-    @State private var showInstructions = true
-    @State private var showScore = false
     @State private var hasGameStarted = false
 
-    // Computed properties
+    // MARK: - Game Header Views
 
     private var gameHeader: some View {
         VStack(spacing: 0) {
@@ -26,7 +25,7 @@ struct SetGameView: View {
 
     @ViewBuilder
     private var score: some View {
-        if viewModel.hasStarted {
+        if hasGameStarted {
             Text("Score: \(viewModel.score)")
                 .font(.title2)
                 .padding(.trailing)
@@ -35,7 +34,7 @@ struct SetGameView: View {
 
     @ViewBuilder
     private var cardsLeft: some View {
-        if viewModel.hasStarted {
+        if hasGameStarted {
             Text("Cards left: \(viewModel.cardsLeft)")
                 .font(.title2)
                 .padding(.trailing)
@@ -50,10 +49,21 @@ struct SetGameView: View {
             .padding(.top)
     }
 
+    // MARK: - Game Instructions Views
+
+    private var mainView: some View {
+        ZStack {
+            if hasGameStarted {
+                cardGrid
+            } else {
+                gameInstructions
+            }
+        }
+    }
+
     private var gameInstructions: some View {
         VStack(spacing: 8) {
-            if !viewModel.hasStarted {
-                Spacer()
+            if !hasGameStarted {
                 Text("How to Play:")
                     .font(.headline)
                 Text(
@@ -87,12 +97,12 @@ struct SetGameView: View {
                 ForEach(viewModel.tableCards) { card in
                     CardView(
                         card: card,
-                        isSelected: viewModel.selectedCardIDs.contains(card.id),
+                        isSelected: viewModel.isSelected(card: card),
                         setEvalStatus: viewModel.setEvalStatus,
                         namespace: dealSpace
                     )
                     .aspectRatio(2 / 3, contentMode: .fit)
-                    .onTapGesture { viewModel.selectCard(card) }
+                    .onTapGesture { viewModel.select(this: card) }
                     .transition(
                         .asymmetric(
                             insertion: .scale(scale: 0.8).combined(
@@ -115,18 +125,24 @@ struct SetGameView: View {
 
     private var actionButtons: some View {
         HStack(spacing: 22) {
-            Button("New Game") {
-                withAnimation { viewModel.startNewGame() }
-                showInstructions = false
-                showScore = true
+            if hasGameStarted {
+                Button("New Game") {
+                    withAnimation { viewModel.startNewGame() }
+                }
+                Button("Deal 3 More") {
+                    withAnimation { viewModel.dealThreeMore() }
+                }
+                .disabled(viewModel.isDeckEmpty)
             }
-            Button("Deal 3 More") {
-                withAnimation { viewModel.dealThreeMore() }
+            if !hasGameStarted {
+                Button("Get Started!") {
+                    withAnimation {
+                        hasGameStarted.toggle()
+                    }
+                }
             }
-            .disabled(viewModel.isDeckEmpty)
-        }
-        .font(.title2)
-        .padding(.bottom, 10)
+        }.font(.title2)
+            .padding(.bottom, 10)
     }
 
     // MAIN BODY
@@ -134,8 +150,9 @@ struct SetGameView: View {
     var body: some View {
         VStack {
             gameHeader
-            gameInstructions
-            cardGrid
+            Spacer()
+            mainView
+            Spacer()
             actionButtons
         }
     }

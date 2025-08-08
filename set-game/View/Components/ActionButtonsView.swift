@@ -26,15 +26,18 @@ struct ActionButtonsView: View {
             if hasGameStarted {
                 /// Main control panel for the active game
                 HStack {
-                    deckBody
+                    discardPileBody
                     Spacer()
                     Button("New Game") { withAnimation { startNewGame() } }
                         .font(.title2)
                     Spacer()
-                    Button("shuffle.circle") { shuffle() }
-                        .font(.title2)
+                    Button(action: { shuffle() }) {
+                        Image(systemName: "shuffle.circle")
+                            .font(.largeTitle)
+                            .foregroundColor(.primary)
+                    }
                     Spacer()
-                    discardPileBody
+                    deckBody
                 }
                 .frame(maxHeight: 120)
             }
@@ -50,7 +53,9 @@ struct ActionButtonsView: View {
         }
     }
 
+    @ViewBuilder
     private var deckBody: some View {
+        Text("+3")
         Text("[DECK]")
             .frame(width: 80, height: 120)
             .border(Color.primary)

@@ -32,37 +32,19 @@ struct GridAndInstructionsView: View {
     // MARK: - Card Grid Sub.View
 
     private var cardGrid: some View {
-        ScrollView {
-            LazyVGrid(
-                columns: [GridItem(.adaptive(minimum: 70))],
-                spacing: 12
-            ) {
-                ForEach(tableCards) { card in
-                    CardView(
-                        card: card,
-                        isSelected: isSelected(card),
-                        setEvalStatus: setEvalStatus,
-                        namespace: namespace
-                    )
-                    .aspectRatio(2 / 3, contentMode: .fit)
-                    .onTapGesture { select(card) }
-                    .transition(
-                        .asymmetric(
-                            insertion: .scale(scale: 0.8).combined(
-                                with: .opacity
-                            ),
-                            removal: .opacity
-                        )
-                    )
-                }
-            }
-            .padding(.horizontal)
-            .padding(.vertical, 6)
-            .animation(
-                .spring(response: 0.35, dampingFraction: 0.75),
-                value: tableCards
+        AspectVGrid(items: tableCards, aspectRatio: 2/3) { card in
+            CardView(
+                card: card,
+                isSelected: isSelected(card),
+                setEvalStatus: setEvalStatus,
+                namespace: namespace
             )
+            .padding(4)
+            .onTapGesture {
+                select(card)
+            }
         }
+        .padding(.horizontal)
     }
 
     // MARK: - Instructions Sub.View

@@ -28,7 +28,7 @@ where ItemView: View, Item: Identifiable {
 
     // MARK: - Sub.Views
 
-    var aspectVGridView: some View {
+    private var aspectVGridView: some View {
         GeometryReader { geometry in
             let width: CGFloat = widthThatFits(
                 itemCount: items.count,

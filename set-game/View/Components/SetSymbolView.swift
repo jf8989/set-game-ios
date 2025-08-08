@@ -1,4 +1,4 @@
-// View/Sub-View/SetSymbolView.swift
+// View/Components/SetSymbolView.swift
 
 import SwiftUI
 

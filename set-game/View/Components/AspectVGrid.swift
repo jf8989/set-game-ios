@@ -1,4 +1,4 @@
-//  View/Sub-Views/AspectVGrid.swift
+//  View/Components/AspectVGrid.swift
 
 import SwiftUI
 

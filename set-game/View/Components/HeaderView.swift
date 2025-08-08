@@ -1,4 +1,4 @@
-//  View/Sub-View/HeaderView.swift
+//  View/Components/HeaderView.swift
 
 import SwiftUI
 

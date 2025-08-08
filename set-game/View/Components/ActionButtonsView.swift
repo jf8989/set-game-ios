@@ -1,4 +1,4 @@
-//  View/Sub-View/ActionButtonsView.swift
+//  View/Components/ActionButtonsView.swift
 
 import SwiftUI
 

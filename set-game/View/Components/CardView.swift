@@ -22,11 +22,11 @@ struct CardView: View {
 
     var body: some View {
         GeometryReader { geo in
-            let rect = RoundedRectangle(cornerRadius: 18)
+            let shape = RoundedRectangle(cornerRadius: 18)
 
             ZStack {
-                rect.fill(Color(.systemBackground))
-                rect.stroke(borderColor, lineWidth: isSelected ? 4 : 2)
+                shape.fill(Color(.systemBackground))
+                shape.stroke(borderColor, lineWidth: isSelected ? 4 : 2)
 
                 // Symbol stack (1‒3) – centred
                 VStack(spacing: geo.size.height * 0.05) {
@@ -46,6 +46,10 @@ struct CardView: View {
                 )
             }
             .matchedGeometryEffect(id: card.id, in: namespace)  // smooth move
+            .scaleEffect(isSelected && setEvalStatus == .found ? 1.05 : 1.0)
+            .rotationEffect(
+                .degrees(isSelected && setEvalStatus == .fail ? 4 : 0)
+            )
         }
         .aspectRatio(2 / 3, contentMode: .fit)
     }

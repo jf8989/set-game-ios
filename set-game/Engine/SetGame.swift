@@ -166,26 +166,32 @@ extension SetGame {
         let cardsToReplace: [CardSet] = selectedCards
 
         /// 2. Finds the indices of the matched cards on the table.
+        /// This is necessary to replace them "in place".
         let matchedIndices = cardsToReplace.compactMap { matchedCard in
             tableCards.firstIndex(where: { $0.id == matchedCard.id })
         }
 
         /// 3. Replaces cards at those indices with new ones from the deck.
+        /// This loop replaces as many matched cards as there are cards in the deck.
         for index in matchedIndices {
             if !deck.isEmpty {
                 tableCards[index] = deck.removeFirst()
             }
         }
 
-        /// In case the deck is empty, makes sure to remove the remaining selected cards from the table.
+        /// 4. This step is crucial for when the deck runs out.
+        /// It removes any cards from the original `cardsToReplace` set that are still on the table.
+        /// If a card was replaced in step 3, it's no longer on the table, so this call won't remove the new card.
+
+        /// It only removes matched cards that couldn't be replaced.
         tableCards.removeAll { cardOnTable in
             cardsToReplace.contains(where: { $0.id == cardOnTable.id })
         }
 
-        /// 4. Moves the selected cards to the discard pile.
+        /// 5. Moves the selected (and now replaced/removed) cards to the discard pile.
         discardPile.append(contentsOf: cardsToReplace)
 
-        /// 5. Clears selection.
+        /// 6. Clears selection.
         clearSelection()
     }
 }

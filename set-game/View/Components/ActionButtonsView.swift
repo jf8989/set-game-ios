@@ -12,6 +12,7 @@ struct ActionButtonsView: View {
     let deck: [CardSet]
     let discardPile: [CardSet]
     let namespace: Namespace.ID
+    let shape = RoundedRectangle(cornerRadius: 10)
 
     // MARK: - Body View
 
@@ -32,13 +33,18 @@ struct ActionButtonsView: View {
                     VStack {
                         Button("New Game") { withAnimation { startNewGame() } }
                             .font(.title2)
-                        Button(action: { shuffle() }) {
+                        Button(action: {
+                            withAnimation(
+                                .spring(response: 0.6, dampingFraction: 0.6)
+                            ) {
+                                shuffle()
+                            }
+                        }) {
                             Image(systemName: "shuffle.circle")
                                 .font(.largeTitle)
                                 .foregroundColor(.primary)
                         }
                     }
-                    
                     Spacer()
                     deckBody
                     Spacer()
@@ -56,14 +62,14 @@ struct ActionButtonsView: View {
             .padding()
         }
     }
-    
+
     // MARK: - Deck View
 
     @ViewBuilder
     private var deckBody: some View {
         ZStack {
             ForEach(deck) { card in
-                RoundedRectangle(cornerRadius: 10)
+                shape
                     .fill(.red)  // card back
                     /// Tag placeholder with card's ID
                     .matchedGeometryEffect(id: card.id, in: namespace)
@@ -80,13 +86,26 @@ struct ActionButtonsView: View {
                 .opacity(isDeckEmpty ? 0 : 1)
         )
     }
-    
+
     // MARK: - Discard Pile View
 
     private var discardPileBody: some View {
-        Text("[DISCARD]")
-            .frame(width: 80, height: 120)
-            .border(Color.primary)
+        ZStack {
+            shape
+                .stroke(lineWidth: 2)
+                .opacity(0.3)
+
+            ForEach(discardPile) { card in
+                CardView(
+                    card: card,
+                    isSelected: false,
+                    setEvalStatus: .none,
+                    namespace: namespace
+                )
+                .matchedGeometryEffect(id: card.id, in: namespace)
+            }
+        }
+        .frame(width: 80, height: 120)
     }
 
 }

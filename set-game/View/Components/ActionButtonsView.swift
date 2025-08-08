@@ -93,7 +93,7 @@ struct ActionButtonsView: View {
         ZStack {
             shape
                 .stroke(lineWidth: 2)
-                .opacity(0.3)
+                .opacity(discardPile.isEmpty ? 0.3 : 1.0)
 
             ForEach(discardPile) { card in
                 CardView(

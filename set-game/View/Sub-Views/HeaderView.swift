@@ -7,10 +7,14 @@ struct HeaderView: View {
     let score: Int
     let cardsLeft: Int
     let hasGameStarted: Bool
-    
+
+    // MARK: - Body View
+
     var body: some View {
         gameHeader
     }
+
+    // MARK: - Header View
 
     private var gameHeader: some View {
         VStack(spacing: 0) {
@@ -22,6 +26,8 @@ struct HeaderView: View {
             gameTitle
         }
     }
+
+    // MARK: - Sub.Views
 
     @ViewBuilder
     private var scoreView: some View {

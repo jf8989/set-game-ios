@@ -13,7 +13,7 @@ struct SetGame {
     var selectedCards: [CardSet] = []
     var setEvalStatus: SetEvalStatus = .none
     var score: Int = 0
-    
+
     // MARK: - Initialization
 
     init() {

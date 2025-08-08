@@ -8,48 +8,9 @@ struct SetGameView: View {
 
     @StateObject private var viewModel = SetGameViewModel()
     @Namespace private var dealSpace
-    @State private var hasGameStarted = false
+    @State private(set) var hasGameStarted = false
 
-    // MARK: - Game Header Views
-
-    private var gameHeader: some View {
-        VStack(spacing: 0) {
-            HStack {
-                score
-                Spacer()
-                cardsLeft
-            }
-            gameTitle
-        }
-    }
-
-    @ViewBuilder
-    private var score: some View {
-        if hasGameStarted {
-            Text("Score: \(viewModel.score)")
-                .font(.title2)
-                .padding(.trailing)
-        }
-    }
-
-    @ViewBuilder
-    private var cardsLeft: some View {
-        if hasGameStarted {
-            Text("Cards left: \(viewModel.cardsLeft)")
-                .font(.title2)
-                .padding(.trailing)
-        }
-    }
-
-    private var gameTitle: some View {
-        Text("Set Game")
-            .font(.largeTitle)
-            .frame(maxWidth: .infinity)
-            .multilineTextAlignment(.center)
-            .padding(.top)
-    }
-
-    // MARK: - Game Instructions Views
+    // MARK: - Center Screen View
 
     private var mainView: some View {
         ZStack {
@@ -60,6 +21,8 @@ struct SetGameView: View {
             }
         }
     }
+
+    // MARK: - Instructions View
 
     private var gameInstructions: some View {
         VStack(spacing: 8) {
@@ -87,6 +50,8 @@ struct SetGameView: View {
         .padding(.bottom, 6)
         .frame(maxWidth: .infinity)
     }
+
+    // MARK: - Card Grid View
 
     private var cardGrid: some View {
         ScrollView {
@@ -123,6 +88,8 @@ struct SetGameView: View {
         }
     }
 
+    // MARK: - Action Buttons View
+
     private var actionButtons: some View {
         HStack(spacing: 22) {
             if hasGameStarted {
@@ -145,11 +112,15 @@ struct SetGameView: View {
             .padding(.bottom, 10)
     }
 
-    // MAIN BODY
+    // MARK: - Main Body View
 
     var body: some View {
         VStack {
-            gameHeader
+            HeaderView(
+                score: viewModel.score,
+                cardsLeft: viewModel.cardsLeft,
+                hasGameStarted: hasGameStarted
+            )
             Spacer()
             mainView
             Spacer()

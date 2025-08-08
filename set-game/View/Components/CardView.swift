@@ -1,4 +1,4 @@
-// View/CardView.swift
+// View/Sub-View/CardView.swift
 
 import SwiftUI
 

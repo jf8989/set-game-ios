@@ -1,4 +1,4 @@
-//  View/GridAndInstructionsView.swift
+//  View/Sub-View/GridAndInstructionsView.swift
 
 import SwiftUI
 

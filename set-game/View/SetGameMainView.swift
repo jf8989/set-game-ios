@@ -37,7 +37,11 @@ struct SetGameView: View {
             startNewGame: { viewModel.startNewGame() },
             dealThreeMore: { viewModel.dealThreeMore() },
             isDeckEmpty: viewModel.isDeckEmpty,
-            onStartGame: { hasGameStarted.toggle() }  // flip bool in closure
+            onStartGame: { hasGameStarted.toggle() },  // flip bool in closure
+            shuffle: { viewModel.shuffleTableCards() },
+            deck: viewModel.deck,
+            discardPile: viewModel.discardPile,
+            namespace: dealSpace
         )
     }
 

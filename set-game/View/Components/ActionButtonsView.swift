@@ -19,25 +19,29 @@ struct ActionButtonsView: View {
         actionButtons
     }
 
-    // MARK: - Sub.Views
+    // MARK: - Action Buttons Wrapper
 
     private var actionButtons: some View {
         ZStack {
             if hasGameStarted {
                 /// Main control panel for the active game
                 HStack {
+                    Spacer()
                     discardPileBody
                     Spacer()
-                    Button("New Game") { withAnimation { startNewGame() } }
-                        .font(.title2)
-                    Spacer()
-                    Button(action: { shuffle() }) {
-                        Image(systemName: "shuffle.circle")
-                            .font(.largeTitle)
-                            .foregroundColor(.primary)
+                    VStack {
+                        Button("New Game") { withAnimation { startNewGame() } }
+                            .font(.title2)
+                        Button(action: { shuffle() }) {
+                            Image(systemName: "shuffle.circle")
+                                .font(.largeTitle)
+                                .foregroundColor(.primary)
+                        }
                     }
+                    
                     Spacer()
                     deckBody
+                    Spacer()
                 }
                 .frame(maxHeight: 120)
             }
@@ -52,17 +56,32 @@ struct ActionButtonsView: View {
             .padding()
         }
     }
+    
+    // MARK: - Deck View
 
     @ViewBuilder
     private var deckBody: some View {
-        Text("+3")
-        Text("[DECK]")
-            .frame(width: 80, height: 120)
-            .border(Color.primary)
-            .onTapGesture {
-                dealThreeMore()
+        ZStack {
+            ForEach(deck) { card in
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(.red)  // card back
+                    /// Tag placeholder with card's ID
+                    .matchedGeometryEffect(id: card.id, in: namespace)
             }
+        }
+        .frame(width: 80, height: 120)
+        .onTapGesture {
+            withAnimation { dealThreeMore() }
+        }
+        .overlay(
+            Text("+3")
+                .font(.headline)
+                .foregroundColor(.white)
+                .opacity(isDeckEmpty ? 0 : 1)
+        )
     }
+    
+    // MARK: - Discard Pile View
 
     private var discardPileBody: some View {
         Text("[DISCARD]")

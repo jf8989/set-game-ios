@@ -27,7 +27,8 @@ struct SetGameView: View {
             isSelected: { viewModel.isSelected(card: $0) },
             setEvalStatus: viewModel.setEvalStatus,
             namespace: dealSpace,
-            select: { viewModel.select(this: $0) }
+            select: { viewModel.select(this: $0) },
+//            scrollDisabled: viewModel.cardsLeft <= 33
         )
     }
 

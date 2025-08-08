@@ -32,7 +32,7 @@ struct GridAndInstructionsView: View {
     // MARK: - Card Grid Sub.View
 
     private var cardGrid: some View {
-        AspectVGrid(items: tableCards, aspectRatio: 2/3) { card in
+        AspectVGrid(items: tableCards, aspectRatio: 2 / 3) { card in
             CardView(
                 card: card,
                 isSelected: isSelected(card),

@@ -12,22 +12,39 @@ class SetGameViewModel: ObservableObject {
     /// from the table to the discard pile.
     @Published private var cardsInFlight: [CardSet] = []
 
+    /// Temporary staging for initial 12 cards so they can "fly" from the deck on New Game.
+    @Published private var stagedForInitialDeal: [CardSet] = []
+
+    /// Internal guard to prevent overlapping initial-deal animations.
+    private var initialDealSession = UUID()
+
+    /// Tunables for the sequential initial deal animation.
+    private let initialDealStep: Double = 0.08  // seconds between cards
+    private let initialDealAnim: Double = 0.35  // duration of each flight
+
     // MARK: - Model Accessors (View State)
 
     /// The View can read these properties to know how to draw itself.
 
     var deck: [CardSet] { game.deck }
 
-    /// This is a crucial modification. The View's grid of cards is now filtered.
-    /// It hides any card that is currently "in flight", making it disappear from the grid.
-    /// This is what triggers the `matchedGeometryEffect` to animate it to its new location.
+    /// Deck **display** = actual undealt deck + the 12 staged "ghosts" (sources for flight)
+    var deckDisplay: [CardSet] { game.deck + stagedForInitialDeal }
+
     var tableCards: [CardSet] {
-        game.tableCards.filter { card in
-            !cardsInFlight.contains(where: { $0.id == card.id })
+        /// Keep a ghost on the grid for in-flight cards so matchedGeometryEffect has a source.
+        let extras = cardsInFlight.filter { inflight in
+            !game.tableCards.contains(where: { $0.id == inflight.id })
         }
+        return game.tableCards + extras
     }
 
-    var discardPile: [CardSet] { game.discardPile + cardsInFlight }
+    var discardPile: [CardSet] {
+        /// Ensure a single destination per id (no duplicates: either in-flight OR settled).
+        let inflightIDs = Set(cardsInFlight.map(\.id))
+        let settled = game.discardPile.filter { !inflightIDs.contains($0.id) }
+        return settled + cardsInFlight
+    }
 
     var selectedCards: [CardSet] { game.selectedCards }
 
@@ -60,6 +77,38 @@ class SetGameViewModel: ObservableObject {
     /// Creates a brand-new instance of the model to guarantee FULL RESET
     func startNewGame() {
         game = SetGame()
+
+        // Capture the model's initially dealt 12 (destination set)
+        let initial12 = game.tableCards
+
+        // 1) Grid must start EMPTY so cards appear one-by-one.
+        game.tableCards.removeAll()
+
+        // 2) Stage those 12 as "deck ghosts" (sources for matchedGeometryEffect).
+        stagedForInitialDeal = initial12
+
+        // 3) Sequentially append to grid + remove ghost in the SAME animation,
+        //    so the card *flies* from deck → its seat.
+        let session = UUID()
+        initialDealSession = session
+
+        for (i, card) in initial12.enumerated() {
+            let delay = Double(i) * initialDealStep
+            DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+                [weak self] in
+                guard let self, self.initialDealSession == session else {
+                    return
+                }
+                withAnimation(.easeInOut(duration: self.initialDealAnim)) {
+                    // Destination appears:
+                    self.game.tableCards.append(card)
+                    // Source disappears:
+                    self.stagedForInitialDeal.removeAll { $0.id == card.id }
+                }
+                // Logging in third person
+                print("ViewModel deals initial card \(i+1)/\(initial12.count)")
+            }
+        }
     }
 
     /// Passes the user's choice to the model.
@@ -96,6 +145,13 @@ class SetGameViewModel: ObservableObject {
     /// Shuffles visible cards
     func shuffleTableCards() {
         game.shuffleTableCards()
+    }
+
+    // MARK: - Helper Methods
+
+    /// Calculates if card is currently animating to the discard pile
+    func isInFlight(_ card: CardSet) -> Bool {
+        cardsInFlight.contains { $0.id == card.id }
     }
 
 }

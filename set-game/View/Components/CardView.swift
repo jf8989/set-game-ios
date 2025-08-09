@@ -46,6 +46,7 @@ struct CardView: View {
                 )
             }
             .matchedGeometryEffect(id: card.id, in: namespace)  // smooth move
+            .opacity(viewModel.isInFlight(card) ? 0.001 : 1)  // keep source in layout while invisible
             .scaleEffect(isSelected && setEvalStatus == .found ? 1.15 : 1.0)
             .rotationEffect(
                 .degrees(isSelected && setEvalStatus == .fail ? 4 : 0)

@@ -28,7 +28,7 @@ struct SetGameView: View {
             setEvalStatus: viewModel.setEvalStatus,
             namespace: dealSpace,
             select: { viewModel.select(this: $0) },
-//            scrollDisabled: viewModel.cardsLeft <= 33
+            //            scrollDisabled: viewModel.cardsLeft <= 33
         )
     }
 
@@ -38,9 +38,9 @@ struct SetGameView: View {
             startNewGame: { viewModel.startNewGame() },
             dealThreeMore: { viewModel.dealThreeMore() },
             isDeckEmpty: viewModel.isDeckEmpty,
-            onStartGame: { hasGameStarted.toggle() },  // flip bool in closure
+            onStartGame: { hasGameStarted.toggle() },
             shuffle: { viewModel.shuffleTableCards() },
-            deck: viewModel.deck,
+            deck: viewModel.deckDisplay,
             discardPile: viewModel.discardPile,
             namespace: dealSpace
         )

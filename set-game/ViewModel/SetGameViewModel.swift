@@ -9,7 +9,7 @@ class SetGameViewModel: ObservableObject {
 
     // MARK: - Animation-Specific State
 
-    /// This is for the initial deal. It works perfectly.
+    /// This is for the initial deal.
     @Published private var stagedForInitialDeal: [CardSet] = []
 
     /// This is the ViewModel's permanent, visible discard pile.
@@ -28,7 +28,7 @@ class SetGameViewModel: ObservableObject {
     /// The table cards are read directly from the model.
     var tableCards: [CardSet] { game.tableCards }
 
-    /// The discard pile is read from our ViewModel's display array.
+    /// The discard pile is read from the ViewModel's display array.
     var discardPile: [CardSet] { discardDisplay }
 
     // Passthrough properties
@@ -53,7 +53,6 @@ class SetGameViewModel: ObservableObject {
 
     // MARK: - User Intents
 
-    /// This function is the working baseline. It is correct.
     func startNewGame() {
         let session = UUID()
         initialDealSession = session
@@ -80,12 +79,10 @@ class SetGameViewModel: ObservableObject {
         }
     }
 
-    /// This is the BROKEN version we are about to fix.
     func select(this card: CardSet) {
         game.choose(this: card)
     }
 
-    /// This is also the BROKEN version we are about to fix.
     func dealThreeMore() {
         game.dealCards()
     }

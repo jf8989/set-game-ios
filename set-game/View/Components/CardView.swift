@@ -22,15 +22,20 @@ struct CardView: View {
 
     var body: some View {
         GeometryReader { geo in
+            // Guard against non-finite or zero height during layout/animation phases.
+            let safeH: CGFloat =
+                (geo.size.height.isFinite && geo.size.height > 0)
+                ? geo.size.height : 1
+
             // This VStack is the "content" that my modifier will wrap.
-            VStack(spacing: geo.size.height * 0.05) {
+            VStack(spacing: safeH * 0.05) {
                 ForEach(0..<card.number.rawValue, id: \.self) { _ in
                     SetSymbolView(
                         symbol: card.symbol,
                         color: viewModel.color(for: card.color),
                         shading: card.shading
                     )
-                    .frame(height: geo.size.height * 0.27)
+                    .frame(height: safeH * 0.27)
                 }
             }
             // I'm applying my new custom modifier here.

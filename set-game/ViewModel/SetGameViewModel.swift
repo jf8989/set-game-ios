@@ -14,8 +14,8 @@ class SetGameViewModel: ObservableObject {
 
     /// He's using a unique ID to ensure that only the most recent "New Game" animation runs.
     private var initialDealSession = UUID()
-    private let initialDealStep: Double = 0.08
-    private let initialDealAnim: Double = 0.35
+    private let initialDealStep: Double = 0.3
+    private let initialDealAnim: Double = 1.0
 
     // MARK: - Computed Properties for the View
 

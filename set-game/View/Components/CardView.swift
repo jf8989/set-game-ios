@@ -6,11 +6,11 @@ struct CardView: View {
     let card: CardSet
     let isSelected: Bool
     let setEvalStatus: SetEvalStatus
-    let namespace: Namespace.ID  // animation
+    let namespace: Namespace.ID
 
     @EnvironmentObject var viewModel: SetGameViewModel
 
-    // Border colour based on selection state
+    // This logic stays here, as it's specific to the card's state.
     private var borderColor: Color {
         guard isSelected else { return .primary }
         switch setEvalStatus {
@@ -22,35 +22,26 @@ struct CardView: View {
 
     var body: some View {
         GeometryReader { geo in
-            let shape = RoundedRectangle(cornerRadius: 18)
-
-            ZStack {
-                shape.fill(Color(.systemBackground))
-                shape.stroke(borderColor, lineWidth: isSelected ? 4 : 2)
-
-                // Symbol stack (1‒3) – centred
-                VStack(spacing: geo.size.height * 0.05) {
-                    ForEach(0..<card.number.rawValue, id: \.self) { _ in
-                        SetSymbolView(
-                            symbol: card.symbol,
-                            color: viewModel.color(for: card.color),
-                            shading: card.shading
-                        )
-                        .frame(height: geo.size.height * 0.27)
-                    }
+            // This VStack is the "content" that my modifier will wrap.
+            VStack(spacing: geo.size.height * 0.05) {
+                ForEach(0..<card.number.rawValue, id: \.self) { _ in
+                    SetSymbolView(
+                        symbol: card.symbol,
+                        color: viewModel.color(for: card.color),
+                        shading: card.shading
+                    )
+                    .frame(height: geo.size.height * 0.27)
                 }
-                .frame(
-                    maxWidth: .infinity,
-                    maxHeight: .infinity,
-                    alignment: .center
-                )
             }
-            .matchedGeometryEffect(id: card.id, in: namespace)  // smooth move
-            .scaleEffect(isSelected && setEvalStatus == .found ? 1.15 : 1.0)
-            .rotationEffect(
-                .degrees(isSelected && setEvalStatus == .fail ? 4 : 0)
-            )
+            // I'm applying my new custom modifier here.
+            // This single line replaces the ZStack, fill, and stroke logic.
+            .cardStyle(borderColor: borderColor, isSelected: isSelected)
         }
         .aspectRatio(2 / 3, contentMode: .fit)
+        .matchedGeometryEffect(id: card.id, in: namespace)
+        .scaleEffect(isSelected && setEvalStatus == .found ? 1.15 : 1.0)
+        .rotationEffect(
+            .degrees(isSelected && setEvalStatus == .fail ? 4 : 0)
+        )
     }
 }

@@ -29,9 +29,12 @@ struct ActionButtonsView: View {
                     Spacer()
                     discardPileBody
                     Spacer()
-                    VStack {
+
+                    VStack(spacing: 12) {
                         Button("New Game") { withAnimation { startNewGame() } }
                             .font(.title2)
+                            .buttonStyle(.bordered)
+
                         Button(action: {
                             withAnimation(
                                 .spring(response: 0.6, dampingFraction: 0.6)

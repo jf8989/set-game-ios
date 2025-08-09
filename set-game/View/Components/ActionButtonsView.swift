@@ -12,7 +12,7 @@ struct ActionButtonsView: View {
     let deck: [CardSet]
     let discardPile: [CardSet]
     let namespace: Namespace.ID
-    let shape = RoundedRectangle(cornerRadius: 10)
+    let shape = RoundedRectangle(cornerRadius: 18)
 
     // MARK: - Body View
 

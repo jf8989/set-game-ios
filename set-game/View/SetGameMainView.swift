@@ -28,7 +28,6 @@ struct SetGameView: View {
             setEvalStatus: viewModel.setEvalStatus,
             namespace: dealSpace,
             select: { viewModel.select(this: $0) },
-            //            scrollDisabled: viewModel.cardsLeft <= 33
         )
     }
 

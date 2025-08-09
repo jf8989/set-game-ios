@@ -25,7 +25,6 @@ struct ActionButtonsView: View {
     private var actionButtons: some View {
         ZStack {
             if hasGameStarted {
-                /// Main control panel for the active game
                 HStack {
                     Spacer()
                     discardPileBody
@@ -52,7 +51,6 @@ struct ActionButtonsView: View {
                 .frame(maxHeight: 120)
             }
 
-            /// Buttons can live below the control panel
             HStack(spacing: 22) {
                 if !hasGameStarted {
                     Button("Get Started!") { withAnimation { onStartGame() } }
@@ -70,8 +68,7 @@ struct ActionButtonsView: View {
         ZStack {
             ForEach(deck) { card in
                 shape
-                    .fill(.red)  // card back
-                    /// Tag placeholder with card's ID
+                    .fill(.red)
                     .matchedGeometryEffect(id: card.id, in: namespace)
             }
         }
@@ -95,17 +92,15 @@ struct ActionButtonsView: View {
                 .stroke(lineWidth: 2)
                 .opacity(discardPile.isEmpty ? 0.3 : 1.0)
 
-            ForEach(discardPile) { card in
+            if let lastCard = discardPile.last {
                 CardView(
-                    card: card,
+                    card: lastCard,
                     isSelected: false,
                     setEvalStatus: .none,
                     namespace: namespace
                 )
-                .matchedGeometryEffect(id: card.id, in: namespace)
             }
         }
         .frame(width: 80, height: 120)
     }
-
 }

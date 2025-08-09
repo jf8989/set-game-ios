@@ -20,6 +20,6 @@ struct DeckFactory {
                 }
             }
         }
-//        .shuffled()
+        .shuffled()
     }
 }

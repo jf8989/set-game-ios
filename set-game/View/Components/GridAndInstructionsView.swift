@@ -41,7 +41,7 @@ struct GridAndInstructionsView: View {
             )
             .padding(4)
             .onTapGesture {
-                withAnimation(.easeInOut) {
+                withAnimation {
                     select(card)
                 }
             }

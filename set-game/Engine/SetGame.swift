@@ -3,7 +3,6 @@
 import Foundation
 
 /// Main rules for the Set card game.
-
 struct SetGame {
     // MARK: - Properties
 
@@ -20,9 +19,9 @@ struct SetGame {
         generateDeck()
     }
 
-    // MARK: - Deck Creation and Game Reset
+    // MARK: - Game State
 
-    /// Regenerates and shuffles the deck, resets all game state.
+    /// My function to reset the game to a fresh state.
     mutating func generateDeck() {
         tableCards.removeAll()
         selectedCards.removeAll()
@@ -33,165 +32,103 @@ struct SetGame {
         dealInitialCards()
     }
 
-    // MARK: - Dealing Logic
-
-    /// Deals up to the specified number of cards from the deck to the table.
     mutating func dealCards() {
-
-        switch setEvalStatus {
-        case .found: drawAndReplaceMatchedCards()
-        case .fail: normalDraw()
-        case .none: normalDraw()
-
+        // If my user found a set, I'll replace those cards instead of adding 3 more.
+        if setEvalStatus == .found {
+            drawAndReplaceMatchedCards()
+        } else {
+            normalDraw()
         }
     }
 
-    // MARK: - Selection Logic
+    mutating func shuffleTableCards() {
+        tableCards.shuffle()
+    }
 
-    /// Handles user selection and Set calculation logic.
+    // MARK: - Core Selection Logic
+
+    /// My core selection logic, now driven by a switch for clarity.
     mutating func choose(this card: CardSet) {
         switch setEvalStatus {
-
-        // When existing selection IS a Set:
         case .found:
-            guard selectedCards.count == 3 else { return }
-            /// Discard cards by moving them to the pile
-            handleThreeSelectedCards()
-            /// Morover, if the chosen card is on the table, select it.
-            select(that: card)
+            // My user tapped while a matched set was showing.
+            // I'll process that set and this tap is now "consumed".
+            drawAndReplaceMatchedCards()
 
-        // When existing selection ISN'T a Set:
         case .fail:
-            guard selectedCards.count == 3 else { return }
-            /// Clear existing selection
-            handleThreeSelectedCards()
-            /// Select chosen card
-            select(that: card)
+            // My user tapped after a failed match.
+            // I'll clear the old selection and start a new one with the tapped card.
+            selectedCards.removeAll()
+            selectedCards.append(card)
+            setEvalStatus = .none
 
-        // Normal selection:
         case .none:
-            /// If user taps on a selected card, deselect it.
+            // This is my normal selection flow.
             if let index = selectedCards.firstIndex(where: { $0.id == card.id })
             {
+                // The user tapped an already selected card, so I'll deselect it.
                 selectedCards.remove(at: index)
             } else if selectedCards.count < 3 {
-                select(that: card)
+                // The user tapped a new card, so I'll add it to the selection.
+                selectedCards.append(card)
             }
 
-            /// Evaluate the selected set:
+            // I'll evaluate for a set only when my user has picked exactly 3 cards.
             if selectedCards.count == 3 {
-                // If result is true:
                 if selectedCards.isSet {
                     setEvalStatus = .found
                     score += 3
                 } else {
-                    // If result is false:
                     setEvalStatus = .fail
                     score -= 1
                 }
             }
         }
     }
-
-    // MARK: - Shuffle Logic
-
-    mutating func shuffleTableCards() {
-        tableCards.shuffle()
-    }
-
 }
 
-// MARK: - Deck Management Helpers
+// MARK: - Card Dealing Helpers
 
-/// Creates and shuffles the full deck, then deals 12 cards
 extension SetGame {
+    /// My helper to deal the initial 12 cards at the start of the game.
     mutating func dealInitialCards() {
         tableCards.append(contentsOf: deck.prefix(12))
         deck.removeFirst(12)
     }
-}
 
-// MARK: - Selection/Discard Helpers
-
-extension SetGame {
-    /// Discards selected cards and moves them to discard pile based on Set evaluation
-    private mutating func handleThreeSelectedCards() {
-        guard setEvalStatus == .found else {
-            /// Reset state
-            selectedCards.removeAll()
-            setEvalStatus = .none
-            return
-        }
-
-        /// Add selected cards to discard pile
-        discardPile.append(contentsOf: selectedCards)
-
-        /// Remove selected cards from the table
-        tableCards.removeAll { cardOnTable in
-            selectedCards.contains(where: { $0.id == cardOnTable.id })
-        }
-
-        clearSelection()
-    }
-
-    /// Selects the chosen card
-    private mutating func select(that card: CardSet) {
-        guard tableCards.contains(where: { $0.id == card.id }) else { return }
-        selectedCards.append(card)
-    }
-
-    /// Clears selection
-    private mutating func clearSelection() {
-        selectedCards.removeAll()
-        setEvalStatus = .none
-    }
-}
-
-// MARK: - Draw Helpers
-
-extension SetGame {
-    ///  Appends cards to the table.
+    /// My helper for a standard 3-card deal.
     private mutating func normalDraw() {
         let cardsToDeal = min(3, deck.count)
-
         if cardsToDeal > 0 {
             tableCards.append(contentsOf: deck.prefix(cardsToDeal))
             deck.removeFirst(cardsToDeal)
         }
     }
 
-    /// Finds the indices of the 3 matched cards on the table.
+    /// My consolidated function to process a matched set.
     private mutating func drawAndReplaceMatchedCards() {
-        /// 1. Purposely renames my card reference for the current intent.
-        let cardsToReplace: [CardSet] = selectedCards
+        let cardsToReplace = selectedCards
 
-        /// 2. Finds the indices of the matched cards on the table.
-        /// This is necessary to replace them "in place".
-        let matchedIndices = cardsToReplace.compactMap { matchedCard in
-            tableCards.firstIndex(where: { $0.id == matchedCard.id })
-        }
+        // First, I'll move the matched cards to the discard pile for the View to see.
+        discardPile.append(contentsOf: cardsToReplace)
 
-        /// 3. Replaces cards at those indices with new ones from the deck.
-        /// This loop replaces as many matched cards as there are cards in the deck.
-        for index in matchedIndices {
-            if !deck.isEmpty {
+        // If my deck still has cards, I'll replace the matched ones on the table.
+        if !deck.isEmpty {
+            let matchedIndices = cardsToReplace.compactMap { matchedCard in
+                tableCards.firstIndex(where: { $0.id == matchedCard.id })
+            }
+            for index in matchedIndices {
                 tableCards[index] = deck.removeFirst()
+            }
+        } else {
+            // If my deck is empty, I'll just remove the matched cards.
+            tableCards.removeAll { cardOnTable in
+                cardsToReplace.contains(where: { $0.id == cardOnTable.id })
             }
         }
 
-        /// 4. This step is crucial for when the deck runs out.
-        /// It removes any cards from the original `cardsToReplace` set that are still on the table.
-        /// If a card was replaced in step 3, it's no longer on the table, so this call won't remove the new card.
-
-        /// It only removes matched cards that couldn't be replaced.
-        tableCards.removeAll { cardOnTable in
-            cardsToReplace.contains(where: { $0.id == cardOnTable.id })
-        }
-
-        /// 5. Moves the selected (and now replaced/removed) cards to the discard pile.
-        discardPile.append(contentsOf: cardsToReplace)
-
-        /// 6. Clears selection.
-        clearSelection()
+        // Finally, I'll reset the selection state.
+        selectedCards.removeAll()
+        setEvalStatus = .none
     }
 }

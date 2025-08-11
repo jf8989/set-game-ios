@@ -64,8 +64,7 @@ struct SetGame {
 
         case .none:
             // This is my normal selection flow.
-            if let index = selectedCards.firstIndex(where: { $0.id == card.id })
-            {
+            if let index = selectedCards.firstIndex(where: { $0.id == card.id }) {
                 // The user tapped an already selected card, so I'll deselect it.
                 selectedCards.remove(at: index)
             } else if selectedCards.count < 3 {

@@ -9,7 +9,7 @@ struct CardView: View {
     let namespace: Namespace.ID
 
     @EnvironmentObject var viewModel: SetGameViewModel
-
+    
     // This logic stays here, as it's specific to the card's state.
     private var borderColor: Color {
         guard isSelected else { return .primary }

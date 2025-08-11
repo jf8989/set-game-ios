@@ -35,13 +35,13 @@ struct ActionButtonsView: View {
                             .font(.title2)
                             .buttonStyle(.bordered)
 
-                        Button(action: {
+                        Button {
                             withAnimation(
                                 .spring(response: 0.6, dampingFraction: 0.6)
                             ) {
                                 shuffle()
                             }
-                        }) {
+                        } label: {
                             Image(systemName: "shuffle.circle")
                                 .font(.largeTitle)
                                 .foregroundColor(.primary)

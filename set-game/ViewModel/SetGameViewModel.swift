@@ -64,18 +64,14 @@ class SetGameViewModel: ObservableObject {
         let initial12 = game.tableCards
         game.tableCards.removeAll()
         stagedForInitialDeal = initial12
+
+        /// Deal one card at a time using the helper.
         for (i, card) in initial12.enumerated() {
-            let delay = Double(i) * initialDealStep
-            DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
-                [weak self] in
-                guard let self, self.initialDealSession == session else {
-                    return
-                }
-                withAnimation(.easeInOut(duration: self.initialDealAnim)) {
-                    self.game.tableCards.append(card)
-                    self.stagedForInitialDeal.removeAll { $0.id == card.id }
-                }
-            }
+            scheduleDeal(
+                card,
+                at: Double(i) * initialDealStep,
+                session: session
+            )
         }
     }
 
@@ -92,5 +88,24 @@ class SetGameViewModel: ObservableObject {
     /// He's passing the shuffle intent to the model.
     func shuffleTableCards() {
         game.shuffleTableCards()
+    }
+
+    // MARK: - Private Hepers
+
+    /// Schedules a single card to move from staged to table with animation.  Keeps session safety to aboid duplicate runs on quick button taps.
+    private func scheduleDeal(_ card: CardSet, at delay: Double, session: UUID)
+    {
+        DispatchQueue.main.asyncAfter(deadline: .now() + delay) { [weak self] in
+            guard let self else { return }
+            guard self.initialDealSession == session else {
+                print("[VM] Skipped deal: stale session")
+                return
+            }
+            withAnimation(.easeInOut(duration: self.initialDealAnim)) {
+                // Move card from staged deck to table
+                self.game.tableCards.append(card)
+                self.stagedForInitialDeal.removeAll { $0.id == card.id }
+            }
+        }
     }
 }

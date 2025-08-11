@@ -20,7 +20,7 @@ struct SetGameView: View {
         )
     }
 
-    private var centerView: some View {
+    private var gridView: some View {
         GridAndInstructionsView(
             tableCards: viewModel.tableCards,
             hasGameStarted: hasGameStarted,
@@ -51,7 +51,7 @@ struct SetGameView: View {
         VStack {
             headerView
             Spacer()
-            centerView
+            gridView
             Spacer()
             actionButtons
         }

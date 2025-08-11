@@ -4,31 +4,48 @@ import Foundation
 import SwiftUI
 
 class SetGameViewModel: ObservableObject {
-    // When the model changes, the view will be notified.
-    @Published private var model = SetGameModel()
+    // MARK: - Model
+    /// He's publishing the entire game model. Any change to the game state will trigger a UI update.
+    @Published private var game = SetGame()
 
-    // MARK: - User Intents
+    // MARK: - Animation-Specific State
+    /// He's using this temporary array to hold cards for the initial dealing animation.
+    @Published private var stagedForInitialDeal: [CardSet] = []
 
-    // Creates a new model and starts the game.
-    func startNewGame() {
-        model = SetGameModel()
-        model.generateDeck()
+    /// He's using a unique ID to ensure that only the most recent "New Game" animation runs.
+    private var initialDealSession = UUID()
+    private let initialDealStep: Double = 0.3
+    private let initialDealAnim: Double = 1.0
+
+    // MARK: - Computed Properties for the View
+
+    /// He's combining the model's deck with the staged cards so the View sees a single source for the deck pile.
+    var deckDisplay: [CardSet] { game.deck + stagedForInitialDeal }
+
+    /// He's exposing the model's table cards directly to the View.
+    var tableCards: [CardSet] { game.tableCards }
+
+    /// He's exposing the model's discard pile directly. This fixed the bug where the discard pile view wasn't updating.
+    var discardPile: [CardSet] { game.discardPile }
+
+    // MARK: Passthrough properties
+
+    /// He's providing direct, read-only access to specific model properties for the View's convenience.
+    var deck: [CardSet] { game.deck }
+    var selectedCards: [CardSet] { game.selectedCards }
+    var setEvalStatus: SetEvalStatus { game.setEvalStatus }
+    var isDeckEmpty: Bool { game.deck.isEmpty }
+    var score: Int { game.score }
+    var cardsLeft: Int { game.deck.count }
+
+    // MARK: - View Helper Methods
+
+    /// He's providing a helper function to check if a card is selected, keeping this logic out of the View.
+    func isSelected(card: CardSet) -> Bool {
+        game.selectedCards.contains { $0.id == card.id }
     }
 
-    // Passes the user's choice to the model.
-    func selectCard(_ card: SetCard) {
-        model.toggleSelection(for: card)
-    }
-
-    // Tells the model to deal more cards.
-    func dealThreeMore() {
-        model.dealCards(for: 3)
-    }
-
-}
-
-// MARK: - Properties for the View to Read
-extension SetGameViewModel {
+    /// He's centralizing the color mapping logic here so the View doesn't need to know about the model's enums.
     func color(for cardColor: CardColor) -> Color {
         switch cardColor {
         case .red: return .red
@@ -36,29 +53,59 @@ extension SetGameViewModel {
         case .purple: return .purple
         }
     }
-}
 
-extension SetGameViewModel {
-    // The View can read these properties to know how to draw itself.
-    var tableCards: [SetCard] {
-        model.tableCards
+    // MARK: - User Intents
+
+    /// He's orchestrating the start of a new game, including the staggered dealing animation.
+    func startNewGame() {
+        let session = UUID()
+        initialDealSession = session
+        game = SetGame()
+        let initial12 = game.tableCards
+        game.tableCards.removeAll()
+        stagedForInitialDeal = initial12
+
+        /// Deal one card at a time using the helper.
+        for (i, card) in initial12.enumerated() {
+            scheduleDeal(
+                card,
+                at: Double(i) * initialDealStep,
+                session: session
+            )
+        }
     }
 
-    var hasStarted: Bool {
-        !tableCards.isEmpty
+    /// He's passing the user's selection directly to the model. The ViewModel's job is just to translate the intent.
+    func select(this card: CardSet) {
+        game.choose(this: card)
     }
 
-    var selectedCardIDs: Set<UUID> {
-        model.selectedCardIDs
+    /// He's passing the deal intent to the model. The animation is handled by the View's `withAnimation` block.
+    func dealThreeMore() {
+        game.dealCards()
     }
 
-    var setEvalStatus: SetEvalStatus { model.cardEvalStatus }
-
-    var isDeckEmpty: Bool {
-        model.deck.isEmpty
+    /// He's passing the shuffle intent to the model.
+    func shuffleTableCards() {
+        game.shuffleTableCards()
     }
 
-    var score: Int { model.score }
+    // MARK: - Private Hepers
 
-    var cardsLeft: Int { model.deck.count }
+    /// Schedules a single card to move from staged to table with animation.  Keeps session safety to aboid duplicate runs on quick button taps.
+    private func scheduleDeal(_ card: CardSet, at delay: Double, session: UUID)
+    {
+        DispatchQueue.main.asyncAfter(deadline: .now() + delay) { [weak self] in
+            guard let self else { return }
+            guard self.initialDealSession == session else {
+                print("[VM] Skipped deal: stale session")
+                return
+            }
+            withAnimation(.easeInOut(duration: self.initialDealAnim)) {
+                // Move card from staged deck to table
+                self.game.tableCards.append(card)
+                self.stagedForInitialDeal.removeAll { $0.id == card.id }
+            }
+        }
+    }
 }

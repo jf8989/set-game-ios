@@ -47,7 +47,7 @@ struct SetGame {
 
     // MARK: - Core Selection Logic
 
-    /// My core selection logic, now driven by a switch for clarity.
+    /// My core selection logic
     mutating func choose(this card: CardSet) {
         switch setEvalStatus {
         case .found:

@@ -1,4 +1,4 @@
-// View/Components/CardView.swift
+// Core/AppScreens/SetGameScreen/Components/CardView.swift
 
 import SwiftUI
 
@@ -7,9 +7,8 @@ struct CardView: View {
     let isSelected: Bool
     let setEvalStatus: SetEvalStatus
     let namespace: Namespace.ID
+    let viewModel: SetGameViewModel
 
-    @EnvironmentObject var viewModel: SetGameViewModel
-    
     // This logic stays here, as it's specific to the card's state.
     private var borderColor: Color {
         guard isSelected else { return .primary }

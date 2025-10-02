@@ -1,4 +1,4 @@
-// View/Components/SetSymbolView.swift
+// Core/AppScreens/SetGameScreen/Components/SetSymbolView.swift
 
 import SwiftUI
 

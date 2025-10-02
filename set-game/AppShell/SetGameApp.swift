@@ -1,15 +1,12 @@
-// AppShell/set_gameApp.swift
+// AppShell/SetGameApp.swift
 
 import SwiftUI
 
 @main
-struct set_gameApp: App {
-    @StateObject private var gameViewModel = SetGameViewModel()
-
+struct SetGameApp: App {
     var body: some Scene {
         WindowGroup {
             SetGameView()
-                .environmentObject(gameViewModel)
         }
     }
 }

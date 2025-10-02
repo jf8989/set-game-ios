@@ -1,4 +1,4 @@
-// View/Shapes/Diamond.swift
+// Core/AppScreens/SetGameScreen/Shapes/Diamond.swift
 
 import SwiftUI
 

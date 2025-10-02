@@ -1,4 +1,4 @@
-//  View/Components/AspectVGrid.swift
+//  Core/AppScreens/SetGameScreen/Components/AspectVGrid.swift
 
 import SwiftUI
 

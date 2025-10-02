@@ -1,17 +1,15 @@
-// View/SetGameView.swift
+// AppShell/SetGameView.swift
 
 import SwiftUI
 
 struct SetGameView: View {
 
     // MARK: - State Properties
-
     @StateObject private var viewModel = SetGameViewModel()
     @Namespace private var dealSpace
     @State private(set) var hasGameStarted = false
 
     // MARK: - Computed Properties (Child Views)
-
     private var headerView: some View {
         HeaderView(
             score: viewModel.score,
@@ -28,6 +26,7 @@ struct SetGameView: View {
             setEvalStatus: viewModel.setEvalStatus,
             namespace: dealSpace,
             select: { viewModel.select(this: $0) },
+            viewModel: viewModel
         )
     }
 
@@ -41,12 +40,11 @@ struct SetGameView: View {
             shuffle: { viewModel.shuffleTableCards() },
             deck: viewModel.deckDisplay,
             discardPile: viewModel.discardPile,
-            namespace: dealSpace
+            namespace: dealSpace,
         )
     }
 
     // MARK: - Main Body View
-
     var body: some View {
         VStack {
             headerView
@@ -56,11 +54,9 @@ struct SetGameView: View {
             actionButtons
         }
     }
-
 }
 
 // MARK: - Preview
-
 #Preview {
     SetGameView()
         .environmentObject(SetGameViewModel())

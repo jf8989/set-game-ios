@@ -1,4 +1,4 @@
-//  View/Components/GridAndInstructionsView.swift
+//  Core/AppScreens/SetGameScreen/Components/GridAndInstructionsView.swift
 
 import SwiftUI
 
@@ -10,6 +10,7 @@ struct GridAndInstructionsView: View {
     let setEvalStatus: SetEvalStatus
     let namespace: Namespace.ID
     let select: (CardSet) -> Void
+    let viewModel: SetGameViewModel
 
     // MARK: - Body View
 
@@ -37,7 +38,8 @@ struct GridAndInstructionsView: View {
                 card: card,
                 isSelected: isSelected(card),
                 setEvalStatus: setEvalStatus,
-                namespace: namespace
+                namespace: namespace,
+                viewModel: viewModel
             )
             .padding(4)
             .onTapGesture {

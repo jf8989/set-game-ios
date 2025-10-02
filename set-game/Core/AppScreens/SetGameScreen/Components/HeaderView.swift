@@ -1,4 +1,4 @@
-//  View/Components/HeaderView.swift
+//  Core/AppScreens/SetGameScreen/Components/HeaderView.swift
 
 import SwiftUI
 

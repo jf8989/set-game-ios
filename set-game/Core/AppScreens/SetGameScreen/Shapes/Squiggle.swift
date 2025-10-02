@@ -1,4 +1,4 @@
-// View/Shapes/Squiggle.swift
+// Core/AppScreens/SetGameScreen/Shapes/Squiggle.swift
 
 import SwiftUI
 

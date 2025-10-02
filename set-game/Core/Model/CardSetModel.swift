@@ -1,4 +1,4 @@
-// Model/SetCardModel.swift
+// Core/Model/SetCardModel.swift
 
 import Foundation
 

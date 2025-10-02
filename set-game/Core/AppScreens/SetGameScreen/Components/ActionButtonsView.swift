@@ -1,4 +1,4 @@
-//  /Components/ActionButtonsView.swift
+//  Core/AppScreens/SetGameScreen/Components/ActionButtonsView.swift
 
 import SwiftUI
 
@@ -13,6 +13,7 @@ struct ActionButtonsView: View {
     let discardPile: [CardSet]
     let namespace: Namespace.ID
     let shape = RoundedRectangle(cornerRadius: 18)
+    let viewModel = SetGameViewModel()
 
     // MARK: - Body View
 
@@ -100,7 +101,8 @@ struct ActionButtonsView: View {
                     card: lastCard,
                     isSelected: false,
                     setEvalStatus: .none,
-                    namespace: namespace
+                    namespace: namespace,
+                    viewModel: viewModel
                 )
             }
         }

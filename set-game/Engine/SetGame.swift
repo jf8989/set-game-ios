@@ -59,7 +59,7 @@ struct SetGame {
             // My user tapped after a failed match.
             // I'll clear the old selection and start a new one with the tapped card.
             selectedCards.removeAll()
-            selectedCards.append(card)
+//            selectedCards.append(card)
             setEvalStatus = .none
 
         case .none:

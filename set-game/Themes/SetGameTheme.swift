@@ -51,7 +51,7 @@ struct SetGameTheme {
     static let symbolGreen: Color = .green
     static let symbolPurple: Color = .purple
 
-    // MARK: - Grid layout (AspectVGrid) — tokens replacing prior literals, no behavior change
+    // MARK: - Grid layout (AspectVGrid) — tokens replacing prior literals
     /// Spacing between rows in the container LazyVGrid.
     static let cardGridContainerSpacing: CGFloat = 0
     /// Spacing between items within a GridItem.
@@ -61,7 +61,7 @@ struct SetGameTheme {
     /// Ceiling-division adjust used in row count computation.
     static let cardGridCeilAdjust: Int = -1
 
-    // MARK: - Grid + Instructions UI (no behavior change)
+    // MARK: - Grid + Instructions UI
     /// Per-card padding inside the grid (was 4).
     static let cardGridItemPadding: CGFloat = 4
     /// Vertical spacing between instruction texts in the VStack (was 8).

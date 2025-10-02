@@ -2,17 +2,22 @@
 
 import SwiftUI
 
-// This struct defines the actual visual changes for my card style.
+// This struct defines the actual visual changes for the card style.
 struct CardStyle: ViewModifier {
     let borderColor: Color
     let isSelected: Bool
 
     func body(content: Content) -> some View {
         ZStack {
-            let shape = RoundedRectangle(cornerRadius: 18)
-            shape.fill(Color(.systemBackground))  // Use system background for light/dark mode
-            shape.stroke(borderColor, lineWidth: isSelected ? 4 : 2)
-            content  // This is where the view I'm modifying will be placed.
+            let shape = RoundedRectangle(cornerRadius: SetGameTheme.cardCornerRadius)
+            shape.fill(Color(.systemBackground))
+            shape.stroke(
+                borderColor,
+                lineWidth: isSelected
+                    ? SetGameTheme.cardSelectedBorderWidth
+                    : SetGameTheme.cardBorderWidth
+            )
+            content  // This is where the modiefied view will be placed.
         }
     }
 }

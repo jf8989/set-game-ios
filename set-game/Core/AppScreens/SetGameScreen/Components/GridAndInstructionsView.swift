@@ -1,10 +1,9 @@
 /// Path: Core/AppScreens/SetGameScreen/Components/GridAndInstructionsView.swift
-/// Role: Switches between instructions and the grid; no VM dependency
+/// Role: Switches between instructions and the grid
 
 import SwiftUI
 
 struct GridAndInstructionsView: View {
-    /// Dependency injection: pass data in
     let tableCards: [CardSet]
     let hasGameStarted: Bool
     let isSelected: (CardSet) -> Bool
@@ -13,10 +12,7 @@ struct GridAndInstructionsView: View {
     let select: (CardSet) -> Void
 
     // MARK: - Body View
-    var body: some View { mainView }
-
-    // MARK: - Center Screen View
-    private var mainView: some View {
+    var body: some View {
         ZStack {
             if hasGameStarted {
                 cardGrid
@@ -28,14 +24,14 @@ struct GridAndInstructionsView: View {
 
     // MARK: - Card Grid Sub.View
     private var cardGrid: some View {
-        AspectVGrid(items: tableCards, aspectRatio: 2 / 3) { card in
+        AspectVGrid(items: tableCards, aspectRatio: SetGameTheme.cardAspectRatio) { card in
             CardView(
                 card: card,
                 isSelected: isSelected(card),
                 setEvalStatus: setEvalStatus,
                 namespace: namespace
             )
-            .padding(4)
+            .padding(SetGameTheme.cardGridItemPadding)
             .onTapGesture {
                 withAnimation { select(card) }
             }
@@ -43,9 +39,9 @@ struct GridAndInstructionsView: View {
         .padding(.horizontal)
     }
 
-    // MARK: - Instructions Sub.View (unchanged)
+    // MARK: - Instructions Sub.View (unchanged behavior, literals → tokens)
     private var gameInstructions: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: SetGameTheme.instructionsStackSpacing) {
             if !hasGameStarted {
                 Text("How to Play:")
                     .font(.headline)
@@ -65,9 +61,9 @@ struct GridAndInstructionsView: View {
                 .fixedSize(horizontal: false, vertical: true)
             }
         }
-        .frame(maxWidth: 500)
+        .frame(maxWidth: SetGameTheme.instructionsMaxWidth)
         .padding(.horizontal)
-        .padding(.bottom, 6)
+        .padding(.bottom, SetGameTheme.instructionsBottomPadding)
         .frame(maxWidth: .infinity)
     }
 }

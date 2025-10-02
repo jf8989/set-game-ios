@@ -1,4 +1,5 @@
-//  Core/AppScreens/SetGameScreen/Components/AspectVGrid.swift
+/// Path: Core/AppScreens/SetGameScreen/Components/AspectVGrid.swift
+/// Role: Adaptive vertical grid that computes item width from geometry and aspect ratio
 
 import SwiftUI
 
@@ -9,7 +10,6 @@ where ItemView: View, Item: Identifiable {
     var content: (Item) -> ItemView
 
     // MARK: - Initilization
-
     init(
         items: [Item],
         aspectRatio: CGFloat,
@@ -21,13 +21,11 @@ where ItemView: View, Item: Identifiable {
     }
 
     // MARK: - Body View
-
     var body: some View {
         aspectVGridView
     }
 
     // MARK: - Sub.Views
-
     private var aspectVGridView: some View {
         GeometryReader { geometry in
             let width: CGFloat = widthThatFits(
@@ -35,7 +33,10 @@ where ItemView: View, Item: Identifiable {
                 in: geometry.size,
                 itemAspectRatio: aspectRatio
             )
-            LazyVGrid(columns: [adaptiveGridItem(width: width)], spacing: 0) {
+            LazyVGrid(
+                columns: [adaptiveGridItem(width: width)],
+                spacing: SetGameTheme.cardGridContainerSpacing
+            ) {
                 ForEach(items) { item in
                     content(item).aspectRatio(aspectRatio, contentMode: .fit)
                 }
@@ -44,10 +45,9 @@ where ItemView: View, Item: Identifiable {
     }
 
     // MARK: - Private Methods
-
     private func adaptiveGridItem(width: CGFloat) -> GridItem {
         var gridItem = GridItem(.adaptive(minimum: width))
-        gridItem.spacing = 0
+        gridItem.spacing = SetGameTheme.cardGridInterItemSpacing
         return gridItem
     }
 
@@ -56,7 +56,7 @@ where ItemView: View, Item: Identifiable {
         in size: CGSize,
         itemAspectRatio: CGFloat
     ) -> CGFloat {
-        var columnCount = 1
+        var columnCount = SetGameTheme.cardGridInitialColumnCount
         var rowCount = itemCount
         if itemCount == 0 { return size.width }
         repeat {
@@ -66,9 +66,8 @@ where ItemView: View, Item: Identifiable {
                 return itemWidth
             }
             columnCount += 1
-            rowCount = (itemCount + columnCount - 1) / columnCount
+            rowCount = (itemCount + columnCount + SetGameTheme.cardGridCeilAdjust) / columnCount
         } while columnCount < itemCount
         return size.width / CGFloat(columnCount)
     }
-
 }

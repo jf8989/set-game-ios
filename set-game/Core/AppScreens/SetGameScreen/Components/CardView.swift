@@ -26,21 +26,21 @@ struct CardView: View {
                 (geo.size.height.isFinite && geo.size.height > 0)
                 ? geo.size.height : 1
 
-            VStack(spacing: safeH * 0.05) {
+            VStack(spacing: safeH * SetGameTheme.symbolVerticalSpacingFactor) {
                 ForEach(0..<card.number.rawValue, id: \.self) { _ in
                     SetSymbolView(
                         symbol: card.symbol,
                         color: card.color.uiColor,
                         shading: card.shading
                     )
-                    .frame(height: safeH * 0.27)
+                    .frame(height: safeH * SetGameTheme.symbolRowHeightFactor)
                 }
             }
             .cardStyle(borderColor: borderColor, isSelected: isSelected)
         }
-        .aspectRatio(2 / 3, contentMode: .fit)
+        .aspectRatio(SetGameTheme.cardAspectRatio, contentMode: .fit)
         .matchedGeometryEffect(id: card.id, in: namespace)
-        .scaleEffect(isSelected && setEvalStatus == .found ? 1.15 : 1.0)
-        .rotationEffect(.degrees(isSelected && setEvalStatus == .fail ? 4 : 0))
+        .scaleEffect(isSelected && setEvalStatus == .found ? SetGameTheme.setFoundScale : 1.0)
+        .rotationEffect(.degrees(isSelected && setEvalStatus == .fail ? SetGameTheme.setFailRotationDegrees : 0))
     }
 }

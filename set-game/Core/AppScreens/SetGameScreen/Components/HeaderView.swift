@@ -3,19 +3,16 @@
 import SwiftUI
 
 struct HeaderView: View {
-    /// Dependency injection: pass data in
     let score: Int
     let cardsLeft: Int
     let hasGameStarted: Bool
 
     // MARK: - Body View
-
     var body: some View {
         gameHeader
     }
 
     // MARK: - Header View
-
     private var gameHeader: some View {
         VStack(spacing: 0) {
             HStack {
@@ -28,13 +25,12 @@ struct HeaderView: View {
     }
 
     // MARK: - Sub.Views
-
     @ViewBuilder
     private var scoreView: some View {
         if hasGameStarted {
             Text("Score: \(score)")
                 .font(.title2)
-                .padding(.trailing)
+                .padding(.leading)
         }
     }
 

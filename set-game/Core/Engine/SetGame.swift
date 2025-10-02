@@ -5,7 +5,6 @@ import Foundation
 /// Main rules for the Set card game.
 struct SetGame {
     // MARK: - Properties
-
     var deck: [CardSet] = []
     var tableCards: [CardSet] = []
     var discardPile: [CardSet] = []
@@ -14,13 +13,11 @@ struct SetGame {
     var score: Int = 0
 
     // MARK: - Initialization
-
     init() {
         generateDeck()
     }
 
     // MARK: - Game State
-
     /// My function to reset the game to a fresh state.
     mutating func generateDeck() {
         tableCards.removeAll()
@@ -46,7 +43,6 @@ struct SetGame {
     }
 
     // MARK: - Core Selection Logic
-
     /// My core selection logic
     mutating func choose(this card: CardSet) {
         switch setEvalStatus {
@@ -66,37 +62,36 @@ struct SetGame {
             if let index = selectedCards.firstIndex(where: { $0.id == card.id }) {
                 // The user tapped an already selected card, so I'll deselect it.
                 selectedCards.remove(at: index)
-            } else if selectedCards.count < 3 {
+            } else if selectedCards.count < SetGame.Rules.selectionTargetCount {
                 // The user tapped a new card, so I'll add it to the selection.
                 selectedCards.append(card)
             }
 
-            // I'll evaluate for a set only when my user has picked exactly 3 cards.
-            if selectedCards.count == 3 {
+            // I'll evaluate for a set only when my user has picked exactly N cards.
+            if selectedCards.count == SetGame.Rules.selectionTargetCount {
                 if selectedCards.isSet {
                     setEvalStatus = .found
-                    score += 3
+                    score += SetGame.Rules.matchScoreReward
                 } else {
                     setEvalStatus = .fail
-                    score -= 1
+                    score -= SetGame.Rules.mismatchScorePenalty
                 }
             }
         }
     }
 }
 
-// MARK: - Card Dealing Helpers
-
+// MARK: - Card Dealing Helpers Ext.
 extension SetGame {
-    /// My helper to deal the initial 12 cards at the start of the game.
+    /// My helper to deal the initial N cards at the start of the game.
     mutating func dealInitialCards() {
-        tableCards.append(contentsOf: deck.prefix(12))
-        deck.removeFirst(12)
+        tableCards.append(contentsOf: deck.prefix(SetGame.Rules.initialDealCount))
+        deck.removeFirst(SetGame.Rules.initialDealCount)
     }
 
-    /// My helper for a standard 3-card deal.
+    /// My helper for a standard deal batch.
     private mutating func normalDraw() {
-        let cardsToDeal = min(3, deck.count)
+        let cardsToDeal = min(SetGame.Rules.dealBatchCount, deck.count)
         if cardsToDeal > 0 {
             tableCards.append(contentsOf: deck.prefix(cardsToDeal))
             deck.removeFirst(cardsToDeal)
@@ -128,5 +123,25 @@ extension SetGame {
         // Finally, I'll reset the selection state.
         selectedCards.removeAll()
         setEvalStatus = .none
+    }
+}
+
+// MARK: - Game Rules Ext.
+extension SetGame {
+    enum Rules {
+        /// Initial cards on table at game start.
+        static let initialDealCount: Int = 12
+
+        /// Cards dealt per “+3” action when no pending match.
+        static let dealBatchCount: Int = 3
+
+        /// Number of selections required to evaluate a set.
+        static let selectionTargetCount: Int = 3
+
+        /// Score delta when a set is found.
+        static let matchScoreReward: Int = 3
+
+        /// Score delta when selection is not a set.
+        static let mismatchScorePenalty: Int = 1
     }
 }

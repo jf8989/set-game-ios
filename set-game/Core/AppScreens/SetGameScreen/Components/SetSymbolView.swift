@@ -1,4 +1,5 @@
-// Core/AppScreens/SetGameScreen/Components/SetSymbolView.swift
+/// Path: Core/AppScreens/SetGameScreen/Components/SetSymbolView.swift
+/// Role: Draw one symbol using our custom shapes (Diamond/Oval/Squiggle)
 
 import SwiftUI
 
@@ -12,14 +13,14 @@ struct SetSymbolView: View {
     var body: some View {
         GeometryReader { geo in
             // Symbol size: 70 % of card width, 60 % of that for height.
-            let width = geo.size.width * 0.70
-            let height = width * 0.60
+            let width = geo.size.width * SetGameTheme.symbolWidthFactor
+            let height = width * SetGameTheme.symbolHeightFactor
 
             switch symbol {
             case .diamond:
                 symbolBody(shape: Diamond(), width: width, height: height)
             case .oval:
-                symbolBody(shape: Capsule(), width: width, height: height)
+                symbolBody(shape: Oval(), width: width, height: height)
             case .squiggle:
                 symbolBody(shape: Squiggle(), width: width, height: height)
             }
@@ -48,7 +49,7 @@ struct SetSymbolView: View {
 
         case .striped:
             shape
-                .fill(color.opacity(0.35))
+                .fill(color.opacity(SetGameTheme.stripedFillOpacity))
                 .frame(width: width, height: height)
                 .centerInParent()
         }

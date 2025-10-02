@@ -1,4 +1,5 @@
-//  Extensions/Array+Extension.swift
+/// Path: Extensions/Array+Extension.swift
+/// Role: Set evaluation helpers (now referencing model-scoped rule)
 
 import Foundation
 
@@ -7,7 +8,8 @@ import Foundation
 /// Evaluates if a card is a set
 extension Array where Element == CardSet {
     var isSet: Bool {
-        guard self.count == 3 else { return false }
+        // Use model-scoped rule instead of a magic number.
+        guard self.count == SetGame.Rules.selectionTargetCount else { return false }
         let colors = self.map { $0.color }
         let symbols = self.map { $0.symbol }
         let numbers = self.map { $0.number.rawValue }

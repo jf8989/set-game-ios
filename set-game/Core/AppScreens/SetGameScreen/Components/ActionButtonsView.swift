@@ -1,5 +1,5 @@
 /// Path: Core/AppScreens/SetGameScreen/Components/ActionButtonsView.swift
-/// Role: Toolbar for game actions; no local VM; discard pile rendering simplified
+/// Role: Toolbar for game actions; discard pile rendering simplified
 
 import SwiftUI
 
@@ -14,11 +14,9 @@ struct ActionButtonsView: View {
     let discardPile: [CardSet]
     let namespace: Namespace.ID
 
-    private let shape = RoundedRectangle(cornerRadius: 18)
+    private let shape = RoundedRectangle(cornerRadius: SetGameTheme.cardCornerRadius)
 
-    var body: some View { actionButtons }
-
-    private var actionButtons: some View {
+    var body: some View {
         ZStack {
             if hasGameStarted {
                 HStack {
@@ -26,13 +24,20 @@ struct ActionButtonsView: View {
                     discardPileBody
                     Spacer()
 
-                    VStack(spacing: 12) {
+                    VStack(spacing: SetGameTheme.controlsVerticalButtonSpacing) {
                         Button("New Game") { withAnimation { startNewGame() } }
                             .font(.title2)
                             .buttonStyle(.bordered)
 
                         Button {
-                            withAnimation(.spring(response: 0.6, dampingFraction: 0.6)) { shuffle() }
+                            withAnimation(
+                                .spring(
+                                    response: SetGameTheme.shuffleSpringResponse,
+                                    dampingFraction: SetGameTheme.shuffleSpringDamping
+                                )
+                            ) {
+                                shuffle()
+                            }
                         } label: {
                             Image(systemName: "shuffle.circle")
                                 .font(.largeTitle)
@@ -43,10 +48,10 @@ struct ActionButtonsView: View {
                     deckBody
                     Spacer()
                 }
-                .frame(maxHeight: 120)
+                .frame(maxHeight: SetGameTheme.controlsMaxHeight)
             }
 
-            HStack(spacing: 22) {
+            HStack(spacing: SetGameTheme.controlsInterItemSpacing) {
                 if !hasGameStarted {
                     Button("Get Started!") { withAnimation { onStartGame() } }
                 }
@@ -62,17 +67,24 @@ struct ActionButtonsView: View {
         ZStack {
             ForEach(deck) { card in
                 shape
-                    .fill(.red)
+                    .fill(SetGameTheme.deckFillColor)
                     .matchedGeometryEffect(id: card.id, in: namespace)
             }
         }
-        .frame(width: 80, height: 120)
+        .frame(
+            width: SetGameTheme.miniTileSize.width,
+            height: SetGameTheme.miniTileSize.height
+        )
         .onTapGesture { withAnimation { dealThreeMore() } }
         .overlay(
-            Text("+3")
+            Text("+\(SetGame.Rules.dealBatchCount)")
                 .font(.headline)
-                .foregroundColor(.white)
-                .opacity(isDeckEmpty ? 0 : 1)
+                .foregroundColor(SetGameTheme.overlayTextColor)
+                .opacity(
+                    isDeckEmpty
+                        ? SetGameTheme.opacityHidden
+                        : SetGameTheme.opacityVisible
+                )
         )
     }
 
@@ -80,8 +92,12 @@ struct ActionButtonsView: View {
     private var discardPileBody: some View {
         ZStack {
             shape
-                .stroke(lineWidth: 2)
-                .opacity(discardPile.isEmpty ? 0.3 : 1.0)
+                .stroke(lineWidth: SetGameTheme.discardStrokeLineWidth)
+                .opacity(
+                    discardPile.isEmpty
+                        ? SetGameTheme.discardEmptyOpacity
+                        : SetGameTheme.opacityVisible
+                )
 
             if let lastCard = discardPile.last {
                 CardView(
@@ -92,6 +108,9 @@ struct ActionButtonsView: View {
                 )
             }
         }
-        .frame(width: 80, height: 120)
+        .frame(
+            width: SetGameTheme.miniTileSize.width,
+            height: SetGameTheme.miniTileSize.height
+        )
     }
 }

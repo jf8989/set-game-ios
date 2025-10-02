@@ -1,4 +1,4 @@
-/// Path: AppShell/SetGameView.swift
+/// Path: Core/AppScreens/SetGameScreen/SetGameView.swift
 /// Role: Feature container view; single owner of SetGameViewModel
 
 import SwiftUI

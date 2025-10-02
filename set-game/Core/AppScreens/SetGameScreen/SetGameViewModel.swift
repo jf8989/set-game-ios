@@ -1,4 +1,5 @@
-// Core/AppScreens/SetGameScreen/SetGameViewModel.swift
+/// Path: Core/AppScreens/SetGameScreen/SetGameViewModel.swift
+/// Role: Reference theme for deal cadence (no behavior change)
 
 import Foundation
 import SwiftUI
@@ -14,8 +15,8 @@ class SetGameViewModel: ObservableObject {
 
     /// He's using a unique ID to ensure that only the most recent "New Game" animation runs.
     private var initialDealSession = UUID()
-    private let initialDealStep: Double = 0.3
-    private let initialDealAnim: Double = 1.0
+    private let initialDealStep: Double = SetGameTheme.initialDealStep
+    private let initialDealAnim: Double = SetGameTheme.initialDealDuration
 
     // MARK: - Computed Properties for the View
 
@@ -93,8 +94,7 @@ class SetGameViewModel: ObservableObject {
     // MARK: - Private Hepers
 
     /// Schedules a single card to move from staged to table with animation.  Keeps session safety to aboid duplicate runs on quick button taps.
-    private func scheduleDeal(_ card: CardSet, at delay: Double, session: UUID)
-    {
+    private func scheduleDeal(_ card: CardSet, at delay: Double, session: UUID) {
         DispatchQueue.main.asyncAfter(deadline: .now() + delay) { [weak self] in
             guard let self else { return }
             guard self.initialDealSession == session else {

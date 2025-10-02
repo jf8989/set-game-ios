@@ -1,4 +1,5 @@
-//  Core/AppScreens/SetGameScreen/Components/ActionButtonsView.swift
+/// Path: Core/AppScreens/SetGameScreen/Components/ActionButtonsView.swift
+/// Role: Toolbar for game actions; no local VM; discard pile rendering simplified
 
 import SwiftUI
 
@@ -12,16 +13,10 @@ struct ActionButtonsView: View {
     let deck: [CardSet]
     let discardPile: [CardSet]
     let namespace: Namespace.ID
-    let shape = RoundedRectangle(cornerRadius: 18)
-    let viewModel = SetGameViewModel()
 
-    // MARK: - Body View
+    private let shape = RoundedRectangle(cornerRadius: 18)
 
-    var body: some View {
-        actionButtons
-    }
-
-    // MARK: - Action Buttons Wrapper
+    var body: some View { actionButtons }
 
     private var actionButtons: some View {
         ZStack {
@@ -37,11 +32,7 @@ struct ActionButtonsView: View {
                             .buttonStyle(.bordered)
 
                         Button {
-                            withAnimation(
-                                .spring(response: 0.6, dampingFraction: 0.6)
-                            ) {
-                                shuffle()
-                            }
+                            withAnimation(.spring(response: 0.6, dampingFraction: 0.6)) { shuffle() }
                         } label: {
                             Image(systemName: "shuffle.circle")
                                 .font(.largeTitle)
@@ -66,7 +57,6 @@ struct ActionButtonsView: View {
     }
 
     // MARK: - Deck View
-
     @ViewBuilder
     private var deckBody: some View {
         ZStack {
@@ -77,9 +67,7 @@ struct ActionButtonsView: View {
             }
         }
         .frame(width: 80, height: 120)
-        .onTapGesture {
-            withAnimation { dealThreeMore() }
-        }
+        .onTapGesture { withAnimation { dealThreeMore() } }
         .overlay(
             Text("+3")
                 .font(.headline)
@@ -89,7 +77,6 @@ struct ActionButtonsView: View {
     }
 
     // MARK: - Discard Pile View
-
     private var discardPileBody: some View {
         ZStack {
             shape
@@ -101,8 +88,7 @@ struct ActionButtonsView: View {
                     card: lastCard,
                     isSelected: false,
                     setEvalStatus: .none,
-                    namespace: namespace,
-                    viewModel: viewModel
+                    namespace: namespace
                 )
             }
         }

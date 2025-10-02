@@ -1,4 +1,5 @@
-//  Core/AppScreens/SetGameScreen/Components/GridAndInstructionsView.swift
+/// Path: Core/AppScreens/SetGameScreen/Components/GridAndInstructionsView.swift
+/// Role: Switches between instructions and the grid; no VM dependency
 
 import SwiftUI
 
@@ -10,16 +11,11 @@ struct GridAndInstructionsView: View {
     let setEvalStatus: SetEvalStatus
     let namespace: Namespace.ID
     let select: (CardSet) -> Void
-    let viewModel: SetGameViewModel
 
     // MARK: - Body View
-
-    var body: some View {
-        mainView
-    }
+    var body: some View { mainView }
 
     // MARK: - Center Screen View
-
     private var mainView: some View {
         ZStack {
             if hasGameStarted {
@@ -31,28 +27,23 @@ struct GridAndInstructionsView: View {
     }
 
     // MARK: - Card Grid Sub.View
-
     private var cardGrid: some View {
         AspectVGrid(items: tableCards, aspectRatio: 2 / 3) { card in
             CardView(
                 card: card,
                 isSelected: isSelected(card),
                 setEvalStatus: setEvalStatus,
-                namespace: namespace,
-                viewModel: viewModel
+                namespace: namespace
             )
             .padding(4)
             .onTapGesture {
-                withAnimation {
-                    select(card)
-                }
+                withAnimation { select(card) }
             }
         }
         .padding(.horizontal)
     }
 
-    // MARK: - Instructions Sub.View
-
+    // MARK: - Instructions Sub.View (unchanged)
     private var gameInstructions: some View {
         VStack(spacing: 8) {
             if !hasGameStarted {

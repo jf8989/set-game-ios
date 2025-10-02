@@ -1,4 +1,5 @@
-// AppShell/SetGameView.swift
+/// Path: AppShell/SetGameView.swift
+/// Role: Feature container view; single owner of SetGameViewModel
 
 import SwiftUI
 
@@ -25,8 +26,7 @@ struct SetGameView: View {
             isSelected: { viewModel.isSelected(card: $0) },
             setEvalStatus: viewModel.setEvalStatus,
             namespace: dealSpace,
-            select: { viewModel.select(this: $0) },
-            viewModel: viewModel
+            select: { viewModel.select(this: $0) }
         )
     }
 
@@ -40,7 +40,7 @@ struct SetGameView: View {
             shuffle: { viewModel.shuffleTableCards() },
             deck: viewModel.deckDisplay,
             discardPile: viewModel.discardPile,
-            namespace: dealSpace,
+            namespace: dealSpace
         )
     }
 
@@ -59,5 +59,4 @@ struct SetGameView: View {
 // MARK: - Preview
 #Preview {
     SetGameView()
-        .environmentObject(SetGameViewModel())
 }

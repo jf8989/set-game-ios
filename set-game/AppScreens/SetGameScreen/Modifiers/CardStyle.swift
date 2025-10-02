@@ -17,7 +17,7 @@ struct CardStyle: ViewModifier {
     }
 }
 
-// This extension makes my new modifier easy to use, like any other built-in modifier.
+// This extension makes the new modifier easy to use, like any other built-in modifier.
 extension View {
     func cardStyle(borderColor: Color, isSelected: Bool) -> some View {
         self.modifier(

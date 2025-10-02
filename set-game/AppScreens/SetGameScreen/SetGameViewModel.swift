@@ -1,4 +1,4 @@
-// ViewModel/SetGameViewModel.swift
+// Screens/SetGameScreen/SetGameViewModel.swift
 
 import Foundation
 import SwiftUI

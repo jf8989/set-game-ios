@@ -29,12 +29,13 @@ struct SetSymbolView: View {
 
     /// Applies solid / open / striped rendering + centres the shape.
     @ViewBuilder
-    private func symbolBody<S: Shape>(
-        shape: S,
+    private func symbolBody<shape: Shape>(
+        shape: shape,
         width: CGFloat,
         height: CGFloat
     ) -> some View {
         switch shading {
+
         case .solid:
             shape
                 .fill(color)

@@ -12,7 +12,9 @@ struct CardView: View {
     // This logic stays here, as it's specific to the card's state.
     private var borderColor: Color {
         guard isSelected else { return .primary }
+
         switch setEvalStatus {
+
         case .found: return .green
         case .fail: return .red
         case .none: return .blue

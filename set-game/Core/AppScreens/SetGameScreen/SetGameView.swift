@@ -1,0 +1,63 @@
+/// Path: AppShell/SetGameView.swift
+/// Role: Feature container view; single owner of SetGameViewModel
+
+import SwiftUI
+
+struct SetGameView: View {
+
+    // MARK: - State Properties
+    @StateObject private var viewModel = SetGameViewModel()
+    @Namespace private var dealSpace
+    @State private(set) var hasGameStarted = false
+
+    // MARK: - Main Body View
+    var body: some View {
+
+        VStack {
+            headerView
+            Spacer()
+            gridView
+            Spacer()
+            actionButtons
+        }
+    }
+
+    // MARK: - Computed Properties (Child Views)
+    private var headerView: some View {
+        HeaderView(
+            score: viewModel.score,
+            cardsLeft: viewModel.cardsLeft,
+            hasGameStarted: hasGameStarted
+        )
+    }
+
+    private var gridView: some View {
+        GridAndInstructionsView(
+            tableCards: viewModel.tableCards,
+            hasGameStarted: hasGameStarted,
+            isSelected: { viewModel.isSelected(card: $0) },
+            setEvalStatus: viewModel.setEvalStatus,
+            namespace: dealSpace,
+            select: { viewModel.select(this: $0) }
+        )
+    }
+
+    private var actionButtons: some View {
+        ActionButtonsView(
+            hasGameStarted: hasGameStarted,
+            startNewGame: { viewModel.startNewGame() },
+            dealThreeMore: { viewModel.dealThreeMore() },
+            isDeckEmpty: viewModel.isDeckEmpty,
+            onStartGame: { hasGameStarted.toggle() },
+            shuffle: { viewModel.shuffleTableCards() },
+            deck: viewModel.deckDisplay,
+            discardPile: viewModel.discardPile,
+            namespace: dealSpace
+        )
+    }
+}
+
+// MARK: - Preview
+#Preview {
+    SetGameView()
+}

@@ -10,6 +10,18 @@ struct SetGameView: View {
     @Namespace private var dealSpace
     @State private(set) var hasGameStarted = false
 
+    // MARK: - Main Body View
+    var body: some View {
+
+        VStack {
+            headerView
+            Spacer()
+            gridView
+            Spacer()
+            actionButtons
+        }
+    }
+
     // MARK: - Computed Properties (Child Views)
     private var headerView: some View {
         HeaderView(
@@ -42,17 +54,6 @@ struct SetGameView: View {
             discardPile: viewModel.discardPile,
             namespace: dealSpace
         )
-    }
-
-    // MARK: - Main Body View
-    var body: some View {
-        VStack {
-            headerView
-            Spacer()
-            gridView
-            Spacer()
-            actionButtons
-        }
     }
 }
 

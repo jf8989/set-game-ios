@@ -9,6 +9,7 @@ import XCTest
 // MARK: - CardView Rendering tests
 final class CardViewTests: XCTestCase {
 
+    // MARK: Helpers
     private func makeCard(number: CardNumber = .one) -> CardSet {
         CardSet(
             id: UUID(),
@@ -19,56 +20,50 @@ final class CardViewTests: XCTestCase {
         )
     }
 
+    // MARK: Not selected / none
     func testCardView_NotSelected_NoneState_ComputesBody() {
         // Given
         let card = makeCard()
-        let namespace = Namespace.ID()
         let view = CardView(
             card: card,
             isSelected: false,
             setEvalStatus: .none,
-            namespace: namespace
+            namespace: TestNamespaceShim.id
         )
-
         // When
         _ = view.body
-
         // Then
         XCTAssertTrue(true)
     }
 
+    // MARK: Selected / found
     func testCardView_Selected_FoundState_ComputesBody() {
         // Given
         let card = makeCard(number: .three)
-        let namespace = Namespace.ID()
         let view = CardView(
             card: card,
             isSelected: true,
             setEvalStatus: .found,
-            namespace: namespace
+            namespace: TestNamespaceShim.id
         )
-
         // When
         _ = view.body
-
         // Then
         XCTAssertTrue(true)
     }
 
+    // MARK: Selected / fail
     func testCardView_Selected_FailState_ComputesBody() {
         // Given
         let card = makeCard(number: .two)
-        let namespace = Namespace.ID()
         let view = CardView(
             card: card,
             isSelected: true,
             setEvalStatus: .fail,
-            namespace: namespace
+            namespace: TestNamespaceShim.id
         )
-
         // When
         _ = view.body
-
         // Then
         XCTAssertTrue(true)
     }

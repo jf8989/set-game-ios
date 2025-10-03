@@ -9,7 +9,7 @@ final class SetGameRulesTests: XCTestCase {
 
     func testInitialDeal_DealsTwelveCardsAndReducesDeck() {
         // Given: a freshly initialized game
-        var game = SetGameRules()
+        let game = SetGameRules()
 
         // When: the game initializes (init triggers generateDeck → dealInitialCards)
         // (no explicit action required)

@@ -19,7 +19,7 @@ final class DeckFactoryTests: XCTestCase {
     func testCreateShuffledDeck_ProducesEightyOneUniqueCards() {
         // Given: the deck factory
         // When: creating a new shuffled deck
-        let createdDeck = DeckFactory.createShuffledDeck()
+        let createdDeck = SetGameRules().createShuffledDeck()
 
         // Then: there are eighty-one cards and all (color, symbol, shading, number) combinations are unique
         XCTAssertEqual(createdDeck.count, 81, "Set should contain exactly eighty-one cards.")
@@ -39,7 +39,7 @@ final class DeckFactoryTests: XCTestCase {
 
     func testCreateShuffledDeck_DistributionPerAttributeCase_IsBalanced() {
         // Given: a freshly created deck
-        let createdDeck = DeckFactory.createShuffledDeck()
+        let createdDeck = SetGameRules().createShuffledDeck()
 
         // When: counting occurrences for each attribute case
         let colorCounts = Dictionary(grouping: createdDeck, by: { $0.color }).mapValues { $0.count }

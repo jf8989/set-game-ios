@@ -12,14 +12,14 @@ final class SetGameViewModelTests: XCTestCase {
         tableCards: [CardSet],
         deckRemainder: [CardSet] = []
     ) -> SetGameRules {
-        var game = SetGameRules()
-        game.tableCards = tableCards
-        game.deck = deckRemainder
-        game.selectedCards.removeAll()
-        game.setEvalStatus = .none
-        game.score = 0
-        game.discardPile.removeAll()
-        return game
+        var gameRules = SetGameRules()
+        gameRules.tableCards = tableCards
+        gameRules.deck = deckRemainder
+        gameRules.selectedCards.removeAll()
+        gameRules.setEvalStatus = .none
+        gameRules.score = 0
+        gameRules.discardPile.removeAll()
+        return gameRules
     }
 
     func testStartNewGame_StagesTwelveCardsAndResetsViewFacingState() {
@@ -78,7 +78,7 @@ final class SetGameViewModelTests: XCTestCase {
     func testDealThreeMore_WhenNoPendingMatch_AppendsUpToThreeCards() {
         // Given: a table with three cards and a deck with five remaining; status is none
         let initialTable = Array(TestCardFactory.makeValidSetTriplet().prefix(3))
-        let extraDeck = DeckFactory.createShuffledDeck().prefix(5)
+        let extraDeck = SetGameRules().createShuffledDeck().prefix(5)
         let seededGame = makeGameWithKnownTable(tableCards: initialTable, deckRemainder: Array(extraDeck))
         let viewModel = SetGameViewModel(game: seededGame)
 

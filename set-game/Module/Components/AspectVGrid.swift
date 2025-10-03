@@ -57,6 +57,7 @@ struct AspectVGrid<Item, ItemView>: View where ItemView: View, Item: Identifiabl
     }
 }
 
+// MARK: - Mirror Seam for Testing purposes ext.
 /// Static test seam that mirrors the private solver (cannot call instance members from type).
 extension AspectVGrid {
     internal static func widthThatFitsForTesting(

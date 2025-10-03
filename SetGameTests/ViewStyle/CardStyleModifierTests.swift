@@ -8,11 +8,13 @@ import XCTest
 
 final class CardStyleModifierTests: XCTestCase {
     func testCardStyleModifier_AppliesWithoutCrash() {
-        // Given
+        // Given: a concrete Text view ("Hello") and specific style inputs
+        //        (borderColor: .blue, isSelected: true).
         let text = Text("Hello")
-        // When (real API: borderColor + isSelected)
+        // When:  applying the production API `cardStyle(borderColor:isSelected:)`
+        //        to the Text to produce a styled View.
         _ = text.cardStyle(borderColor: .blue, isSelected: true)
-        // Then
+        // Then:  the modifier composes successfully (no throw / no crash).
         XCTAssertTrue(true)
     }
 }

@@ -7,21 +7,6 @@ import XCTest
 
 final class SetGameViewModelTests: XCTestCase {
 
-    // Helper: build a deterministic game with three known cards on table and a small deck
-    private func makeGameWithKnownTable(
-        tableCards: [CardSet],
-        deckRemainder: [CardSet] = []
-    ) -> SetGameRules {
-        var gameRules = SetGameRules()
-        gameRules.tableCards = tableCards
-        gameRules.deck = deckRemainder
-        gameRules.selectedCards.removeAll()
-        gameRules.setEvalStatus = .none
-        gameRules.score = 0
-        gameRules.discardPile.removeAll()
-        return gameRules
-    }
-
     func testStartNewGame_StagesTwelveCardsAndResetsViewFacingState() {
         // Given: a fresh view model with tiny delays for near-immediate scheduling
         let viewModel = SetGameViewModel(initialDealStep: 0.0001, initialDealAnim: 0.0001)
@@ -29,8 +14,10 @@ final class SetGameViewModelTests: XCTestCase {
         // When: starting a new game
         viewModel.startNewGame()
 
-        // Then: immediately after call, the table is empty, and deckDisplay shows all eighty-one (deck plus staged twelve)
-        // Note: exact ordering is irrelevant; we assert counts and invariants.
+        // Then: immediately after invocation (pre-animation), `tableCards` is empty and
+        //       `deckDisplay` contains all 81 cards (the full deck, including any that
+        //       are staged for the initial deal but not yet visible on the table).
+        //       Ordering is irrelevant; we assert only counts/invariants.
         XCTAssertEqual(viewModel.tableCards.count, 0, "Table should be emptied before staged dealing begins.")
         XCTAssertEqual(
             viewModel.deckDisplay.count,
@@ -42,7 +29,7 @@ final class SetGameViewModelTests: XCTestCase {
     func testSelect_WhenThreeCardsMakeAValidSet_StatusBecomesFound_AndScoreIncreases() {
         // Given: three cards that form a valid set placed on table; empty deck (to avoid replacement noise)
         let validTriplet = TestCardFactory.makeValidSetTriplet()
-        let seededGame = makeGameWithKnownTable(tableCards: validTriplet, deckRemainder: [])
+        let seededGame = SetGameTestDataFactory.makeGameWithKnownTable(tableCards: validTriplet, deckRemainder: [])
         let viewModel = SetGameViewModel(game: seededGame)
 
         // When: user selects those three cards
@@ -50,15 +37,20 @@ final class SetGameViewModelTests: XCTestCase {
         viewModel.select(this: validTriplet[1])
         viewModel.select(this: validTriplet[2])
 
-        // Then: evaluation status is found and score increments by the reward
+        // Then: evaluation status becomes `.found` and the score increases exactly by
+        //       the match reward (`Rules.matchScoreReward`).
         XCTAssertEqual(viewModel.setEvalStatus, .found, "Selecting a valid set must mark status as found.")
-        XCTAssertEqual(viewModel.score, SetGameRules.Rules.matchScoreReward, "Score should increase by the match reward.")
+        XCTAssertEqual(
+            viewModel.score,
+            SetGameRules.Rules.matchScoreReward,
+            "Score should increase by the match reward."
+        )
     }
 
     func testSelect_WhenThreeCardsDoNotMakeAValidSet_StatusBecomesFail_AndScoreDecreases() {
         // Given: three cards that do not form a set placed on table; empty deck
         let invalidTriplet = TestCardFactory.makeInvalidSetTriplet()
-        let seededGame = makeGameWithKnownTable(tableCards: invalidTriplet, deckRemainder: [])
+        let seededGame = SetGameTestDataFactory.makeGameWithKnownTable(tableCards: invalidTriplet, deckRemainder: [])
         let viewModel = SetGameViewModel(game: seededGame)
 
         // When: user selects those three cards
@@ -66,7 +58,8 @@ final class SetGameViewModelTests: XCTestCase {
         viewModel.select(this: invalidTriplet[1])
         viewModel.select(this: invalidTriplet[2])
 
-        // Then: status is fail and score decreases by the mismatch penalty
+        // Then: evaluation status becomes `.fail` and the score decreases exactly by
+        //       the mismatch penalty (`Rules.mismatchScorePenalty`).
         XCTAssertEqual(viewModel.setEvalStatus, .fail, "Mismatch must mark status as fail.")
         XCTAssertEqual(
             viewModel.score,
@@ -79,7 +72,10 @@ final class SetGameViewModelTests: XCTestCase {
         // Given: a table with three cards and a deck with five remaining; status is none
         let initialTable = Array(TestCardFactory.makeValidSetTriplet().prefix(3))
         let extraDeck = SetGameRules().createShuffledDeck().prefix(5)
-        let seededGame = makeGameWithKnownTable(tableCards: initialTable, deckRemainder: Array(extraDeck))
+        let seededGame = SetGameTestDataFactory.makeGameWithKnownTable(
+            tableCards: initialTable,
+            deckRemainder: Array(extraDeck)
+        )
         let viewModel = SetGameViewModel(game: seededGame)
 
         let originalTableCount = viewModel.tableCards.count
@@ -88,7 +84,9 @@ final class SetGameViewModelTests: XCTestCase {
         // When: the user deals more cards
         viewModel.dealThreeMore()
 
-        // Then: table grows by up to three; deck shrinks accordingly
+        // Then: the table grows by `min(3, originalDeckCount)` cards and the deck count
+        //       becomes `max(0, originalDeckCount - 3)`. We assert counts only; specific
+        //       identities are irrelevant here.
         XCTAssertEqual(viewModel.tableCards.count, originalTableCount + min(3, originalDeckCount))
         XCTAssertEqual(viewModel.cardsLeft, max(0, originalDeckCount - 3))
     }
@@ -96,7 +94,7 @@ final class SetGameViewModelTests: XCTestCase {
     func testShuffleTableCards_ChangesOrderButKeepsSameElements() {
         // Given: a table with a known order and a fixed deck
         let triplet = TestCardFactory.makeValidSetTriplet()
-        let seededGame = makeGameWithKnownTable(tableCards: triplet, deckRemainder: [])
+        let seededGame = SetGameTestDataFactory.makeGameWithKnownTable(tableCards: triplet, deckRemainder: [])
         let viewModel = SetGameViewModel(game: seededGame)
 
         let originalIdentifiers = viewModel.tableCards.map { $0.id }
@@ -104,7 +102,9 @@ final class SetGameViewModelTests: XCTestCase {
         // When: shuffling the table cards
         viewModel.shuffleTableCards()
 
-        // Then: same elements remain but order likely changes (allow equality if shuffle returns same order by chance)
+        // Then: the multiset of elements is preserved (same identifiers), while order is
+        //       expected to change. Because shuffles can coincidentally preserve order,
+        //       we assert element equality via sets and keep order-change as a soft check.
         let shuffledIdentifiers = viewModel.tableCards.map { $0.id }
         XCTAssertEqual(
             Set(originalIdentifiers),

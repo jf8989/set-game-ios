@@ -114,3 +114,14 @@ struct ActionButtonsView: View {
         )
     }
 }
+
+/// Role: Expose static helpers for logic-only testing
+extension ActionButtonsView {
+    internal static func deckOverlayOpacity(isDeckEmpty: Bool) -> Double {
+        isDeckEmpty ? 0.0 : 0.5
+    }
+
+    internal static func discardStrokeOpacity(isDiscardEmpty: Bool) -> Double {
+        isDiscardEmpty ? 0.0 : 1.0
+    }
+}

@@ -6,11 +6,27 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXContainerItemProxy section */
+		74B25AF72E8F276A00F30D32 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 74FAED1F2E3963CB0010426F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 74FAED262E3963CB0010426F;
+			remoteInfo = "set-game";
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
+		74B25AF32E8F276900F30D32 /* SetGameTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SetGameTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		74FAED272E3963CB0010426F /* set-game.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "set-game.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		74B25AF42E8F276A00F30D32 /* SetGameTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = SetGameTests;
+			sourceTree = "<group>";
+		};
 		74FAED292E3963CB0010426F /* set-game */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = "set-game";
@@ -19,6 +35,13 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		74B25AF02E8F276900F30D32 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		74FAED242E3963CB0010426F /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -33,6 +56,7 @@
 			isa = PBXGroup;
 			children = (
 				74FAED292E3963CB0010426F /* set-game */,
+				74B25AF42E8F276A00F30D32 /* SetGameTests */,
 				74FAED282E3963CB0010426F /* Products */,
 			);
 			sourceTree = "<group>";
@@ -41,6 +65,7 @@
 			isa = PBXGroup;
 			children = (
 				74FAED272E3963CB0010426F /* set-game.app */,
+				74B25AF32E8F276900F30D32 /* SetGameTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -48,6 +73,29 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		74B25AF22E8F276900F30D32 /* SetGameTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 74B25AF92E8F276A00F30D32 /* Build configuration list for PBXNativeTarget "SetGameTests" */;
+			buildPhases = (
+				74B25AEF2E8F276900F30D32 /* Sources */,
+				74B25AF02E8F276900F30D32 /* Frameworks */,
+				74B25AF12E8F276900F30D32 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				74B25AF82E8F276A00F30D32 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				74B25AF42E8F276A00F30D32 /* SetGameTests */,
+			);
+			name = SetGameTests;
+			packageProductDependencies = (
+			);
+			productName = SetGameTests;
+			productReference = 74B25AF32E8F276900F30D32 /* SetGameTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		74FAED262E3963CB0010426F /* set-game */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 74FAED322E3963CC0010426F /* Build configuration list for PBXNativeTarget "set-game" */;
@@ -80,6 +128,11 @@
 				LastSwiftUpdateCheck = 1640;
 				LastUpgradeCheck = 1640;
 				TargetAttributes = {
+					74B25AF22E8F276900F30D32 = {
+						CreatedOnToolsVersion = 16.4;
+						LastSwiftMigration = 1640;
+						TestTargetID = 74FAED262E3963CB0010426F;
+					};
 					74FAED262E3963CB0010426F = {
 						CreatedOnToolsVersion = 16.4;
 					};
@@ -100,11 +153,19 @@
 			projectRoot = "";
 			targets = (
 				74FAED262E3963CB0010426F /* set-game */,
+				74B25AF22E8F276900F30D32 /* SetGameTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		74B25AF12E8F276900F30D32 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		74FAED252E3963CB0010426F /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -115,6 +176,13 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		74B25AEF2E8F276900F30D32 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		74FAED232E3963CB0010426F /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -124,7 +192,54 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		74B25AF82E8F276A00F30D32 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 74FAED262E3963CB0010426F /* set-game */;
+			targetProxy = 74B25AF72E8F276A00F30D32 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		74B25AFA2E8F276A00F30D32 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = L8264UZJKL;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "Ravn-iOS-Nerdery.SetGameTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/set-game.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/set-game";
+			};
+			name = Debug;
+		};
+		74B25AFB2E8F276A00F30D32 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = L8264UZJKL;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "Ravn-iOS-Nerdery.SetGameTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/set-game.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/set-game";
+			};
+			name = Release;
+		};
 		74FAED302E3963CC0010426F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -305,6 +420,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		74B25AF92E8F276A00F30D32 /* Build configuration list for PBXNativeTarget "SetGameTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				74B25AFA2E8F276A00F30D32 /* Debug */,
+				74B25AFB2E8F276A00F30D32 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		74FAED222E3963CB0010426F /* Build configuration list for PBXProject "set-game" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

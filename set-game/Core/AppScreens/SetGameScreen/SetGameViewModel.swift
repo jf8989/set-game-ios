@@ -4,7 +4,7 @@
 import Foundation
 import SwiftUI
 
-class SetGameViewModel: ObservableObject {
+final class SetGameViewModel: ObservableObject {
     // MARK: - Model
     /// He's publishing the entire game model. Any change to the game state will trigger a UI update.
     @Published private var game = SetGame()
@@ -15,8 +15,31 @@ class SetGameViewModel: ObservableObject {
 
     /// He's using a unique ID to ensure that only the most recent "New Game" animation runs.
     private var initialDealSession = UUID()
-    private let initialDealStep: Double = SetGameTheme.initialDealStep
-    private let initialDealAnim: Double = SetGameTheme.initialDealDuration
+    private let initialDealStep: Double
+    private let initialDealAnim: Double
+
+    // MARK: - Initializers
+
+    /// Designated initializer with sensible defaults. **App behavior unchanged.**
+    init(
+        initialDealStep: Double = SetGameTheme.initialDealStep,
+        initialDealAnim: Double = SetGameTheme.initialDealDuration
+    ) {
+        self.initialDealStep = initialDealStep
+        self.initialDealAnim = initialDealAnim
+    }
+
+    /// Internal-only initializer used by tests to inject a deterministic game and timing.
+    /// Access level is `internal` so production code remains unaffected.
+    internal init(
+        game: SetGame,
+        initialDealStep: Double = SetGameTheme.initialDealStep,
+        initialDealAnim: Double = SetGameTheme.initialDealDuration
+    ) {
+        self._game = Published(initialValue: game)
+        self.initialDealStep = initialDealStep
+        self.initialDealAnim = initialDealAnim
+    }
 
     // MARK: - Computed Properties for the View
 
@@ -67,10 +90,10 @@ class SetGameViewModel: ObservableObject {
         stagedForInitialDeal = initial12
 
         /// Deal one card at a time using the helper.
-        for (i, card) in initial12.enumerated() {
+        for (indexWithinInitialDeal, card) in initial12.enumerated() {
             scheduleDeal(
                 card,
-                at: Double(i) * initialDealStep,
+                at: Double(indexWithinInitialDeal) * initialDealStep,
                 session: session
             )
         }
@@ -91,9 +114,9 @@ class SetGameViewModel: ObservableObject {
         game.shuffleTableCards()
     }
 
-    // MARK: - Private Hepers
+    // MARK: - Private Helpers
 
-    /// Schedules a single card to move from staged to table with animation.  Keeps session safety to aboid duplicate runs on quick button taps.
+    /// Schedules a single card to move from staged to table with animation. Keeps session safety to avoid duplicate runs on quick button taps.
     private func scheduleDeal(_ card: CardSet, at delay: Double, session: UUID) {
         DispatchQueue.main.asyncAfter(deadline: .now() + delay) { [weak self] in
             guard let self else { return }

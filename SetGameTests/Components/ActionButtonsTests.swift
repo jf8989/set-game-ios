@@ -1,4 +1,4 @@
-/// Path: SetGameTests/Components/ActionButtonsLogicTests.swift
+/// Path: SetGameTests/Components/ActionButtonsTests.swift
 /// Role: Unit-test ActionButtonsView helpers
 import XCTest
 

@@ -2,24 +2,9 @@
 /// Role: Unit tests for width solver logic via a proxy (pure math; Given/When/Then everywhere)
 
 import XCTest
+import CoreGraphics
 
 @testable import set_game
-
-/// Single source of truth proxy lives in `AspectVerticalGridLayoutTests`.
-private enum WidthSolverProxy {
-    static func widthThatFits(
-        numberOfItems: Int,
-        containerSize: CGSize,
-        itemAspectRatio: CGFloat
-    ) -> CGFloat {
-        // Delegate to the corrected proxy to avoid any future drift.
-        return AspectVerticalGridLayoutTests.widthThatFitsProxy(
-            numberOfItems: numberOfItems,
-            containerSize: containerSize,
-            itemAspectRatio: itemAspectRatio
-        )
-    }
-}
 
 final class AspectVerticalGridLayoutTests: XCTestCase {
 
@@ -248,4 +233,64 @@ final class AspectVerticalGridLayoutTests: XCTestCase {
             )
         }
     }
+
+    func testWidthThatFits_ZeroItems_ReturnsContainerWidth() {
+            // Given
+            let containerSize = CGSize(width: 640, height: 360)
+            let itemAspectRatio: CGFloat = 2.0 / 3.0
+
+            // When
+            let computedWidth = AspectVGrid.widthThatFitsForTesting(
+                numberOfItems: 0,
+                containerSize: containerSize,
+                itemAspectRatio: itemAspectRatio
+            )
+
+            // Then
+            XCTAssertEqual(computedWidth, containerSize.width)
+        }
+
+        func testWidthThatFits_NoOverflow_ForTwelveItems_PhonePortrait() {
+            // Given
+            let numberOfItems = 12
+            let containerSize = CGSize(width: 360, height: 640)
+            let itemAspectRatio: CGFloat = 2.0 / 3.0
+
+            // When
+            let itemWidth = AspectVGrid.widthThatFitsForTesting(
+                numberOfItems: numberOfItems,
+                containerSize: containerSize,
+                itemAspectRatio: itemAspectRatio
+            )
+
+            // Then: resulting rows * itemHeight fit container height
+            XCTAssertGreaterThan(itemWidth, 0)
+            let estimatedColumnCount = max(1, Int(containerSize.width / itemWidth))
+            let itemHeight = itemWidth / itemAspectRatio
+            let estimatedRowCount = (numberOfItems + estimatedColumnCount - 1) / estimatedColumnCount
+            XCTAssertLessThanOrEqual(CGFloat(estimatedRowCount) * itemHeight, containerSize.height)
+        }
+
+        func testWidthThatFits_Monotonic_WhenContainerShrinks_ItemWidthNotLarger() {
+            // Given
+            let numberOfItems = 12
+            let larger = CGSize(width: 800, height: 600)
+            let smaller = CGSize(width: 600, height: 600)
+            let aspect: CGFloat = 2.0 / 3.0
+
+            // When
+            let widthLarge = AspectVGrid.widthThatFitsForTesting(
+                numberOfItems: numberOfItems,
+                containerSize: larger,
+                itemAspectRatio: aspect
+            )
+            let widthSmall = AspectVGrid.widthThatFitsForTesting(
+                numberOfItems: numberOfItems,
+                containerSize: smaller,
+                itemAspectRatio: aspect
+            )
+
+            // Then
+            XCTAssertLessThanOrEqual(widthSmall, widthLarge)
+        }
 }

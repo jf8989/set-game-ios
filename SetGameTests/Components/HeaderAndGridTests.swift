@@ -1,4 +1,4 @@
-/// Path: SetGameTests/Components/HeaderAndGridToggleTests.swift
+/// Path: SetGameTests/Components/HeaderAndGridTests.swift
 /// Role: Execute both branches for HeaderView and GridAndInstructionsView
 
 import SwiftUI

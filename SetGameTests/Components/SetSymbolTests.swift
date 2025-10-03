@@ -1,4 +1,4 @@
-/// Path: SetGameTests/Components/SetSymbolRenderingChoiceTests.swift
+/// Path: SetGameTests/Components/SetSymbolTests.swift
 /// Role: Cover SetSymbolView shading branches (correct initializer)
 
 import SwiftUI

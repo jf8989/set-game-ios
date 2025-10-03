@@ -9,7 +9,7 @@ import Foundation
 extension Array where Element == CardSet {
     var isSet: Bool {
         // Use model-scoped rule instead of a magic number.
-        guard self.count == SetGame.Rules.selectionTargetCount else { return false }
+        guard self.count == SetGameRules.Rules.selectionTargetCount else { return false }
         let colors = self.map { $0.color }
         let symbols = self.map { $0.symbol }
         let numbers = self.map { $0.number.rawValue }

@@ -1,4 +1,4 @@
-/// Path: SetGameTests/Components/CardViewRenderingTests.swift
+/// Path: SetGameTests/Components/CardViewTests.swift
 /// Role: Exercise CardView branches by touching body under several states
 
 import SwiftUI

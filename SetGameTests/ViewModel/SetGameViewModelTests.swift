@@ -11,8 +11,8 @@ final class SetGameViewModelTests: XCTestCase {
     private func makeGameWithKnownTable(
         tableCards: [CardSet],
         deckRemainder: [CardSet] = []
-    ) -> SetGame {
-        var game = SetGame()
+    ) -> SetGameRules {
+        var game = SetGameRules()
         game.tableCards = tableCards
         game.deck = deckRemainder
         game.selectedCards.removeAll()
@@ -52,7 +52,7 @@ final class SetGameViewModelTests: XCTestCase {
 
         // Then: evaluation status is found and score increments by the reward
         XCTAssertEqual(viewModel.setEvalStatus, .found, "Selecting a valid set must mark status as found.")
-        XCTAssertEqual(viewModel.score, SetGame.Rules.matchScoreReward, "Score should increase by the match reward.")
+        XCTAssertEqual(viewModel.score, SetGameRules.Rules.matchScoreReward, "Score should increase by the match reward.")
     }
 
     func testSelect_WhenThreeCardsDoNotMakeAValidSet_StatusBecomesFail_AndScoreDecreases() {
@@ -70,7 +70,7 @@ final class SetGameViewModelTests: XCTestCase {
         XCTAssertEqual(viewModel.setEvalStatus, .fail, "Mismatch must mark status as fail.")
         XCTAssertEqual(
             viewModel.score,
-            -SetGame.Rules.mismatchScorePenalty,
+            -SetGameRules.Rules.mismatchScorePenalty,
             "Score should decrease by the mismatch penalty."
         )
     }

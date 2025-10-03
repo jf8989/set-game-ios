@@ -77,7 +77,7 @@ struct ActionButtonsView: View {
         )
         .onTapGesture { withAnimation { dealThreeMore() } }
         .overlay(
-            Text("+\(SetGame.Rules.dealBatchCount)")
+            Text("+\(SetGameRules.Rules.dealBatchCount)")
                 .font(.headline)
                 .foregroundColor(SetGameTheme.overlayTextColor)
                 .opacity(

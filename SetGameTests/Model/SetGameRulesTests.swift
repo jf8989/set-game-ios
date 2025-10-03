@@ -9,7 +9,7 @@ final class SetGameRulesTests: XCTestCase {
 
     func testInitialDeal_DealsTwelveCardsAndReducesDeck() {
         // Given: a freshly initialized game
-        var game = SetGame()
+        var game = SetGameRules()
 
         // When: the game initializes (init triggers generateDeck → dealInitialCards)
         // (no explicit action required)
@@ -24,7 +24,7 @@ final class SetGameRulesTests: XCTestCase {
 
     func testDealThreeMore_WhenNoPendingMatch_AppendsUpToThreeFromDeck() {
         // Given: a game with a known deck size and no pending match
-        var game = SetGame()
+        var game = SetGameRules()
         game.setEvalStatus = .none
         let originalTableCount = game.tableCards.count
         let originalDeckCount = game.deck.count
@@ -43,7 +43,7 @@ final class SetGameRulesTests: XCTestCase {
 
     func testDealThreeMore_WhenMatchFound_DeckNonEmpty_ReplacesMatchedCardsInPlace() {
         // Given: a game where three selected cards form a valid set and the deck has spare cards
-        var game = SetGame()
+        var game = SetGameRules()
         let validSet = TestCardFactory.makeValidSetTriplet()
         game.tableCards.replaceSubrange(0..<3, with: validSet)
         game.selectedCards = validSet
@@ -62,7 +62,7 @@ final class SetGameRulesTests: XCTestCase {
 
     func testDealThreeMore_WhenMatchFound_DeckEmpty_RemovesMatchedCardsFromTable() {
         // Given: a game with an empty deck and a found set on the table
-        var game = SetGame()
+        var game = SetGameRules()
         game.deck.removeAll()
         let matchedTriplet = TestCardFactory.makeValidSetTriplet()
         game.tableCards = matchedTriplet
@@ -80,7 +80,7 @@ final class SetGameRulesTests: XCTestCase {
 
     func testChoose_WhenThirdSelectionCompletesValidSet_SetsFoundAndRewardsScore() {
         // Given: three cards on table that make a valid set and an empty selection
-        var game = SetGame()
+        var game = SetGameRules()
         let validSet = TestCardFactory.makeValidSetTriplet()
         game.tableCards.replaceSubrange(0..<3, with: validSet)
         game.selectedCards.removeAll()
@@ -96,14 +96,14 @@ final class SetGameRulesTests: XCTestCase {
         XCTAssertEqual(game.setEvalStatus, .found, "Selecting a valid set should mark status as found.")
         XCTAssertEqual(
             game.score,
-            originalScore + SetGame.Rules.matchScoreReward,
+            originalScore + SetGameRules.Rules.matchScoreReward,
             "Score should increase by match reward."
         )
     }
 
     func testChoose_WhenThirdSelectionIsMismatch_SetsFailAndPenalizesScore() {
         // Given: three cards that do not form a set
-        var game = SetGame()
+        var game = SetGameRules()
         let invalidSet = TestCardFactory.makeInvalidSetTriplet()
         game.tableCards.replaceSubrange(0..<3, with: invalidSet)
         let originalScore = game.score
@@ -117,7 +117,7 @@ final class SetGameRulesTests: XCTestCase {
         XCTAssertEqual(game.setEvalStatus, .fail, "Mismatch should mark status as fail.")
         XCTAssertEqual(
             game.score,
-            originalScore - SetGame.Rules.mismatchScorePenalty,
+            originalScore - SetGameRules.Rules.mismatchScorePenalty,
             "Score should decrease by mismatch penalty."
         )
     }

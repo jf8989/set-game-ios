@@ -127,7 +127,6 @@ extension SetGameRules {
 }
 
 // MARK: - Deck Factory Helper Ext.
-
 extension SetGameRules {
     func createShuffledDeck() -> [CardSet] {
         CardColor.allCases.flatMap { color in

@@ -7,7 +7,7 @@ import SwiftUI
 final class SetGameViewModel: ObservableObject {
     // MARK: - Model
     /// He's publishing the entire game model. Any change to the game state will trigger a UI update.
-    @Published private var game = SetGame()
+    @Published private var game = SetGameRules()
 
     // MARK: - Animation-Specific State
     /// He's using this temporary array to hold cards for the initial dealing animation.
@@ -32,7 +32,7 @@ final class SetGameViewModel: ObservableObject {
     /// Internal-only initializer used by tests to inject a deterministic game and timing.
     /// Access level is `internal` so production code remains unaffected.
     internal init(
-        game: SetGame,
+        game: SetGameRules,
         initialDealStep: Double = SetGameTheme.initialDealStep,
         initialDealAnim: Double = SetGameTheme.initialDealDuration
     ) {
@@ -84,7 +84,7 @@ final class SetGameViewModel: ObservableObject {
     func startNewGame() {
         let session = UUID()
         initialDealSession = session
-        game = SetGame()
+        game = SetGameRules()
         let initial12 = game.tableCards
         game.tableCards.removeAll()
         stagedForInitialDeal = initial12

@@ -1,4 +1,4 @@
-// AppShell/SetGameApp.swift
+// set-game/SetGameApp.swift
 
 import SwiftUI
 

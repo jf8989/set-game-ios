@@ -1,4 +1,4 @@
-/// Path: Core/AppScreens/SetGameScreen/SetGameViewModel.swift
+/// Path: set-game/Module/Screens/SetGameViewModel.swift
 /// Role: Reference theme for deal cadence (no behavior change)
 
 import Foundation

@@ -1,4 +1,4 @@
-/// Path: Core/AppScreens/SetGameScreen/Components/AspectVGrid.swift
+/// Path: set-game/Module/Components/AspectVGrid.swift
 /// Role: Adaptive vertical grid… + static test seam
 
 import SwiftUI

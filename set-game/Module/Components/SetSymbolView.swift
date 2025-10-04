@@ -1,4 +1,4 @@
-/// Path: Core/AppScreens/SetGameScreen/Components/SetSymbolView.swift
+/// Path: set-game/Module/Components/SetSymbolView.swift
 /// Role: Draw one symbol using our custom shapes (Diamond/Oval/Squiggle)
 
 import SwiftUI

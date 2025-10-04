@@ -1,4 +1,4 @@
-/// Path: Core/AppScreens/SetGameScreen/Components/GridAndInstructionsView.swift
+/// Path: set-game/Module/Components/GridAndInstructionsView.swift
 /// Role: Switches between instructions and the grid
 
 import SwiftUI

@@ -10,31 +10,31 @@ import XCTest
 final class SetSymbolTests: XCTestCase {
 
     // MARK: Rendering choice
-    func testSymbolShadingBranches_ExecuteWithoutCrash() {
-        let shadings: [CardShading] = [.solid, .open, .striped]
-        for shading in shadings {
+    func testSetSymbolView_ShadingSwitch_ExecutesWithoutCrash() {
+        // Given: all shading cases for a fixed symbol/color.
+        let shadingCases: [CardShading] = [.solid, .open, .striped]
+
+        // When: computing the `body` for each shading (touches the View's switch).
+        // Then: building the body should not throw or crash (sanity only; no snapshot).
+        for shading in shadingCases {
             let view = SetSymbolView(symbol: .diamond, color: .red, shading: shading)
-            _ = view.body  // touches the switch; not snapshot-testing
+            _ = view.body
             XCTAssertTrue(true)
         }
     }
 
     // MARK: Geometry + all symbols/shadings
     func testSetSymbolView_AllSymbols_AllShadings_ComputesBody() {
-        // Given
-        let symbols: [CardSymbol] = [.diamond, .oval, .squiggle]
-        let shadings: [CardShading] = [.solid, .open, .striped]
+        // Given: all symbol cases crossed with all shading cases.
+        let symbolCases: [CardSymbol] = [.diamond, .oval, .squiggle]
+        let shadingCases: [CardShading] = [.solid, .open, .striped]
 
-        for symbol in symbols {
-            for shading in shadings {
-                let view = SetSymbolView(
-                    symbol: symbol,
-                    color: .red,
-                    shading: shading
-                )
-                // When
+        // When: computing `body` for every combination.
+        // Then: body computation succeeds for all pairs (no crash; geometry paths exist).
+        for symbol in symbolCases {
+            for shading in shadingCases {
+                let view = SetSymbolView(symbol: symbol, color: .red, shading: shading)
                 _ = view.body
-                // Then
                 XCTAssertTrue(true)
             }
         }

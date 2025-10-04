@@ -1,4 +1,4 @@
-/// Path: Core/AppScreens/SetGameScreen/Shapes/Squiggle.swift
+/// Path: set-game/Module/Shapes/Squiggle.swift
 /// Role: Theme-driven amplitude factor
 
 import SwiftUI

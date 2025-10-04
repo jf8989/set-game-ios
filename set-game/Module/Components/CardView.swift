@@ -1,4 +1,4 @@
-/// Path: Core/AppScreens/SetGameScreen/Components/CardView.swift
+/// Path: set-game/Module/Components/CardView.swift
 /// Role: Renders a single card; no dependency on the ViewModel
 
 import SwiftUI

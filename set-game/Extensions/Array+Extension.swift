@@ -1,4 +1,4 @@
-/// Path: Extensions/Array+Extension.swift
+/// Path: set-game/Extensions/Array+Extension.swift
 /// Role: Set evaluation helpers (now referencing model-scoped rule)
 
 import Foundation

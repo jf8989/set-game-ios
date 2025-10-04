@@ -1,4 +1,4 @@
-/// Path: Core/AppScreens/SetGameScreen/Shapes/Oval.swift
+/// Path: set-game/Module/Shapes/Oval.swift
 /// Role: Custom oval shape to keep symbol rendering consistent (custom shapes everywhere)
 
 import SwiftUI

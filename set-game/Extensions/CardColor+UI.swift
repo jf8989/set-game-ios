@@ -1,4 +1,4 @@
-/// Path: Extensions/CardColor+UI.swift
+/// Path: set-game/Extensions/CardColor+UI.swift
 /// Role: Domain→UI mapping; tiny, justified extension per checklist
 
 import SwiftUI

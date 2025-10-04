@@ -1,4 +1,4 @@
-// Core/AppScreens/SetGameScreen/Modifiers/CardStyle.swift
+// set-game/Module/Modifiers/CardStyle.swift
 
 import SwiftUI
 

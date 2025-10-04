@@ -1,4 +1,4 @@
-/// Path: Core/AppScreens/SetGameScreen/SetGameTheme.swift
+/// Path: set-game/Resources/SetGameTheme.swift
 /// Role: Central theme constants for Set Game UI (sizes, factors, mild animation)
 
 import SwiftUI

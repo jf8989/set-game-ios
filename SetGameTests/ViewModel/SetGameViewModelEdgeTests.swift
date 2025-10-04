@@ -9,7 +9,10 @@ final class SetGameViewModelEdgeTests: XCTestCase {
 
     // MARK: - Async helpers
 
-    /// Wait until at least `minCount` cards are visible on table (the VM deals them with staggered async).
+    /// Waits until `tableCards.count >= minCount` or times out.
+    /// Polls every 50ms on the main queue to match the VM’s staggered deal cadence.
+    /// Adds a small timeout cushion to account for scheduler jitter; fails with the
+    /// observed count for debuggability.
     private func waitForTableCards(
         in viewModel: SetGameViewModel,
         atLeast minCount: Int,
@@ -40,7 +43,9 @@ final class SetGameViewModelEdgeTests: XCTestCase {
         wait(for: [exp], timeout: seconds + 0.2)
     }
 
-    /// Try to find a valid set; if none on table, deal more and retry up to `attempts`.
+    /// Tries to locate a valid set among the current `tableCards`.
+    /// If none is found, deals three more cards and retries up to `attempts` times,
+    /// allowing a short render window between attempts. Returns the first triple found.
     private func findValidSet(using viewModel: SetGameViewModel, attempts: Int = 4) -> [CardSet]? {
         for _ in 0..<attempts {
             if let s = firstValidSet(in: viewModel.tableCards) { return s }
@@ -51,7 +56,9 @@ final class SetGameViewModelEdgeTests: XCTestCase {
         return firstValidSet(in: viewModel.tableCards)
     }
 
-    /// Try to find a mismatch triple; if none on table, deal more and retry up to `attempts`.
+    /// Tries to locate a non-set triple among `tableCards`.
+    /// If none is found, deals three more cards and retries up to `attempts` times,
+    /// allowing a short render window between attempts. Returns the first triple found.
     private func findMismatch(using viewModel: SetGameViewModel, attempts: Int = 4) -> [CardSet]? {
         for _ in 0..<attempts {
             if let m = firstMismatchTriple(in: viewModel.tableCards) { return m }
@@ -63,6 +70,8 @@ final class SetGameViewModelEdgeTests: XCTestCase {
 
     // MARK: - Pure helpers
 
+    /// Exhaustive O(n³) search for the first valid set within `cards`.
+    /// Returns the first triple that satisfies `isSet`, or `nil` if none exists.
     private func firstValidSet(in cards: [CardSet]) -> [CardSet]? {
         let n = cards.count
         guard n >= 3 else { return nil }
@@ -77,6 +86,8 @@ final class SetGameViewModelEdgeTests: XCTestCase {
         return nil
     }
 
+    /// Exhaustive O(n³) search for the first triple that is *not* a set.
+    /// Returns the first non-matching triple, or `nil` if all triples form sets.
     private func firstMismatchTriple(in cards: [CardSet]) -> [CardSet]? {
         let n = cards.count
         guard n >= 3 else { return nil }
@@ -94,7 +105,7 @@ final class SetGameViewModelEdgeTests: XCTestCase {
     // MARK: - Tests
 
     func testDeselection_TogglesCardSelectionOff() {
-        // Given: a fresh game where cards will arrive asynchronously
+        // Given: a fresh game started; we wait for at least one visible card (async deal).
         let viewModel = SetGameViewModel()
         viewModel.startNewGame()
         waitForTableCards(in: viewModel, atLeast: 1, timeout: 1.0)
@@ -106,15 +117,15 @@ final class SetGameViewModelEdgeTests: XCTestCase {
         viewModel.select(this: firstCard)
         XCTAssertTrue(viewModel.isSelected(card: firstCard))
 
-        // When: tapping the same card again
+        // When: tapping the same card again.
         viewModel.select(this: firstCard)
 
-        // Then: selection toggles off
+        // Then: the second tap toggles selection off for that exact card.
         XCTAssertFalse(viewModel.isSelected(card: firstCard))
     }
 
     func testFailState_ResetsOnNewSelection() {
-        // Given: enough cards on table, then pick a triple that is not a set
+        // Given: twelve cards are visible; we find a triple that is not a set.
         let viewModel = SetGameViewModel()
         viewModel.startNewGame()
         waitForTableCards(in: viewModel, atLeast: 12, timeout: 4.0)
@@ -124,22 +135,22 @@ final class SetGameViewModelEdgeTests: XCTestCase {
             return
         }
 
-        // When: selecting the three non-matching cards
+        // When: selecting all three non-matching cards.
         mismatch.forEach { viewModel.select(this: $0) }
 
-        // Then: status becomes fail
+        // Then: evaluation state becomes `.fail`.
         XCTAssertEqual(viewModel.setEvalStatus, .fail)
 
-        // When: a new selection begins
+        // When: starting a new selection with a different card.
         let nextCard = viewModel.tableCards.first { !mismatch.contains($0) }!
         viewModel.select(this: nextCard)
 
-        // Then: failure state clears
+        // Then: the failure state clears (state no longer `.fail`).
         XCTAssertNotEqual(viewModel.setEvalStatus, .fail)
     }
 
     func testFoundState_ConsumesMatchedCards() {
-        // Given: enough cards on table, then pick a real set
+        // Given: twelve cards are visible; we find a valid set and capture its identifiers.
         let viewModel = SetGameViewModel()
         viewModel.startNewGame()
         waitForTableCards(in: viewModel, atLeast: 12, timeout: 4.0)
@@ -150,16 +161,16 @@ final class SetGameViewModelEdgeTests: XCTestCase {
         }
         let matchedIDs = Set(validSet.map { $0.id })
 
-        // When: select all three
+        // When: selecting all three cards that form the set.
         validSet.forEach { viewModel.select(this: $0) }
 
-        // Then: status reflects found
+        // Then: evaluation state becomes `.found`.
         XCTAssertEqual(viewModel.setEvalStatus, .found)
 
-        // And When: deal replacement/cleanup
+        // And When: requesting cleanup/deal to advance the game.
         viewModel.dealThreeMore()
 
-        // Then: matched IDs are gone; state reset
+        // Then: none of the matched identifiers remain on the table and state resets to `.none`.
         XCTAssertFalse(viewModel.tableCards.contains { matchedIDs.contains($0.id) })
         XCTAssertEqual(viewModel.setEvalStatus, .none)
     }

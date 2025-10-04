@@ -1,4 +1,4 @@
-/// Path: Core/AppScreens/SetGameScreen/Components/ActionButtonsView.swift
+/// Path: set-game/Module/Components/ActionButtonsView.swift
 /// Role: Toolbar for game actions; discard pile rendering simplified
 
 import SwiftUI

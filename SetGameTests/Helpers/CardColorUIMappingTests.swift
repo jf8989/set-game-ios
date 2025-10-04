@@ -6,12 +6,17 @@ import XCTest
 @testable import set_game
 
 final class CardColorUIMappingTests: XCTestCase {
-    func testAllCardColors_HaveUIColor() {
-        // Given
-        let allColors: [CardColor] = [.red, .green, .purple]
-        // When/Then
-        for color in allColors {
-            XCTAssertNotNil(color.uiColor)
+    func testAllCardColors_HaveUIColorMapping() {
+        // Given: all supported card colors in the domain.
+        let allCardColors: [CardColor] = [.red, .green, .purple]
+
+        // When: retrieving the UIKit color mapping for each domain color.
+        // Then: every color must have a non-nil `uiColor` mapping.
+        for cardColor in allCardColors {
+            XCTAssertNotNil(
+                cardColor.uiColor,
+                "Missing UI color mapping for domain color: \(cardColor)"
+            )
         }
     }
 }

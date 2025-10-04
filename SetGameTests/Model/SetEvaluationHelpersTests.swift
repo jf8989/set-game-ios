@@ -8,57 +8,58 @@ import XCTest
 final class SetEvaluationHelpersTests: XCTestCase {
 
     func testIsSet_ReturnsTrue_ForAllSameEachAttribute() {
-        // Given: three cards identical in every attribute except identifier
+        // Given: three cards identical in every attribute (identifier may differ).
         let cardOne = TestCardFactory.makeCard(color: .red, symbol: .diamond, shading: .solid, number: .one)
         let cardTwo = TestCardFactory.makeCard(color: .red, symbol: .diamond, shading: .solid, number: .one)
         let cardThree = TestCardFactory.makeCard(color: .red, symbol: .diamond, shading: .solid, number: .one)
 
-        // When: evaluating the selection
-        let selectedCards = [cardOne, cardTwo, cardThree]
+        // When: evaluating the three-card selection for set validity.
+        let selectedCardsTriplet = [cardOne, cardTwo, cardThree]
 
-        // Then: this is a valid set (all attributes the same)
-        XCTAssertTrue(selectedCards.isSet, "All-same across attributes should be a valid set.")
+        // Then: a triplet with all-same attributes is a valid set.
+        XCTAssertTrue(selectedCardsTriplet.isSet, "All-same across attributes should be a valid set.")
     }
 
     func testIsSet_ReturnsTrue_ForAllDifferentEachAttribute() {
-        // Given: three cards where each attribute is all-different
-        let selectedCards = TestCardFactory.makeValidSetTriplet()
+        // Given: three cards where each attribute is all-different across the triplet.
+        let selectedCardsTriplet = TestCardFactory.makeValidSetTriplet()
 
-        // When: evaluating the selection
-        let evaluationResult = selectedCards.isSet
+        // When: evaluating the selection.
+        let evaluationResult = selectedCardsTriplet.isSet
 
-        // Then: this is a valid set (all-different across attributes)
+        // Then: a triplet with all-different attributes is a valid set.
         XCTAssertTrue(evaluationResult, "All-different across attributes should be a valid set.")
     }
 
     func testIsSet_ReturnsFalse_ForMixedAttributes() {
-        // Given: three cards where at least one attribute is mixed (neither all-same nor all-different)
-        let selectedCards = TestCardFactory.makeInvalidSetTriplet()
+        // Given: three cards where at least one attribute is mixed
+        //        (neither all-same nor all-different).
+        let selectedCardsTriplet = TestCardFactory.makeInvalidSetTriplet()
 
-        // When: evaluating the selection
-        let evaluationResult = selectedCards.isSet
+        // When: evaluating the selection.
+        let evaluationResult = selectedCardsTriplet.isSet
 
-        // Then: not a valid set
+        // Then: mixed attributes invalidate the set.
         XCTAssertFalse(evaluationResult, "Mixed attribute should invalidate the set.")
     }
 
     func testIsSet_ReturnsFalse_WhenSelectionCountIsNotThree() {
-        // Given: selections of size zero, one, two, and four
+        // Given: selections with sizes other than three.
         let emptySelection: [CardSet] = []
-        let singleSelection: [CardSet] = [TestCardFactory.makeValidSetTriplet()[0]]
-        let doubleSelection: [CardSet] = Array(TestCardFactory.makeValidSetTriplet().prefix(2))
-        var fourSelection = TestCardFactory.makeValidSetTriplet()
-        fourSelection.append(TestCardFactory.makeValidSetTriplet()[0])
+        let singleCardSelection: [CardSet] = [TestCardFactory.makeValidSetTriplet()[0]]
+        let doubleCardSelection: [CardSet] = Array(TestCardFactory.makeValidSetTriplet().prefix(2))
+        var fourCardSelection = TestCardFactory.makeValidSetTriplet()
+        fourCardSelection.append(TestCardFactory.makeValidSetTriplet()[0])
 
-        // When: evaluating each selection
+        // When: evaluating each selection.
         let evaluationResults = [
             emptySelection.isSet,
-            singleSelection.isSet,
-            doubleSelection.isSet,
-            fourSelection.isSet,
+            singleCardSelection.isSet,
+            doubleCardSelection.isSet,
+            fourCardSelection.isSet,
         ]
 
-        // Then: only triplets are candidates; others must be false
+        // Then: only exactly three cards can be evaluated as a set; all others are false.
         XCTAssertEqual(
             evaluationResults,
             [false, false, false, false],
@@ -67,17 +68,17 @@ final class SetEvaluationHelpersTests: XCTestCase {
     }
 
     func testAllSameOrAllDifferent_BehavesForHashableScenarios() {
-        // Given: several arrays of hashable values
+        // Given: several arrays of Hashable values representing attribute projections.
         let allSameValues = [1, 1, 1]
         let allDifferentValues = [1, 2, 3]
         let mixedValues = [1, 1, 2]
 
-        // When: checking the helper
+        // When: checking the helper.
         let resultAllSame = allSameValues.allSameOrAllDifferent
         let resultAllDifferent = allDifferentValues.allSameOrAllDifferent
         let resultMixed = mixedValues.allSameOrAllDifferent
 
-        // Then: only all-same and all-different should succeed
+        // Then: only all-same and all-different pass; mixed fails.
         XCTAssertTrue(resultAllSame, "All identical values should be accepted.")
         XCTAssertTrue(resultAllDifferent, "All distinct values should be accepted.")
         XCTAssertFalse(resultMixed, "Mixed arrays should be rejected.")

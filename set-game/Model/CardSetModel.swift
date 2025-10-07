@@ -1,4 +1,4 @@
-// Model/SetCardModel.swift
+// set-game/Model/SetCardModel.swift
 
 import Foundation
 
